@@ -1,6 +1,6 @@
 from os import system
 import os
-from graph_build import graph_build
+from graph_build import graph_build, set_graph_attributes
 from weight_generator import weight_generator
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -13,9 +13,9 @@ if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 1.1                |-|')
+    print('|-|   NeuroRC: Version 1.2                |-|')
     print('|-|   Author: J Weirathmueller            |-|')
-    print('|-|   Last Updated: December 7th, 2017    |-|')
+    print('|-|   Last Updated: December 20th, 2017   |-|')
     print(' ===========================================')
     i = i+1
 
@@ -46,9 +46,18 @@ while True:
 print(nx.info(G))
 nx.write_gexf(G, 'graph.gexf')
 
-pos = graphviz_layout(G, prog='dot')
-nx.draw(G, pos)
-plt.show()
+
+
+G = set_graph_attributes(G) # sets attributes
+
+
+
+
+# pos = graphviz_layout(G, prog='dot')
+# nx.draw(G, pos)
+# plt.show()
+
+
 
 
 #dependency injection
