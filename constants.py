@@ -7,16 +7,19 @@ _a_A = 1     #(msec)^-1
 
 
 #Channel Reversing Potentials
-_V_E = 0     #(mV) - excitatory
-_V_L = -65   #(mV) - leakage
-_V_I = -75   #(mV) - inhibitory
-#_V_K = -90   #(mV) - potassium
+voltage_E = 0     #(mV) - excitatory
+voltage_L = -65   #(mV) - leakage
+voltage_I = -75   #(mV) - inhibitory
+voltage_K = -90   #(mV) - potassium
 
 
 #Assorted
-_G_L = 28    #ns - leakage conductance
-_C   = 0.5   #nF - capacitance of cell membrane (?????????)
-_k   = 0.08  #(mV)^-1 - slope of the sigmoid (smaller is more gradual)
-_V_0 = -45   #(mV) -
-_V_T = -50   #(mV) - firing threshold
-_beta = 1    #(mv)^-1 - tells about slope of sigma. experiment with value. start out similar to k.
+conductance_L     = 28    #nS - leakage conductance
+conductance_K_max = 25    #nS - range (0<x<50) change later?
+
+capacitance       = 0.5   #nF - capacitance of cell membrane
+_k                = 0.08  #(mV)^-1 - slope of the sigmoid (smaller is more gradual)
+voltage_0         = -45   #(mV) -
+voltage_thresh    = -50   #(mV) - firing threshold
+_beta             = 0.08  #(mv)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
+dt                = 100   # msec (time increment)

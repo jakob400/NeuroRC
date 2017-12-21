@@ -1,24 +1,29 @@
 from os import system
 import os
-from graph_build import graph_build
+from graph_build import graph_build, set_graph_attributes
 from weight_generator import weight_generator
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 from networkx.drawing.nx_agraph import graphviz_layout
 import pygraphviz
 import csv
+import math_functions
+import const
+
 
 i=0
 if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 1.1                |-|')
+    print('|-|   NeuroRC: Version 2.0.2              |-|')
     print('|-|   Author: J Weirathmueller            |-|')
-    print('|-|   Last Updated: December 7th, 2017    |-|')
+    print('|-|   Last Updated: December 21st, 2017   |-|')
     print(' ===========================================')
     i = i+1
 
+"""
 while True:
     response = input('Would you like to generate a new graph? (y/n)\n')
     if (response == 'y'):
@@ -26,8 +31,8 @@ while True:
         while True:
             response = input('What would you like to title the file?\n')
             if (response[-5:] == '.gexf'):
-                nx.write_gexf(G, response)
-                print('file written to' , response)
+                #nx.write_gexf(G, response)
+                #print('file written to' , response)
                 break
             else:
                 print('incorrect file type\n')
@@ -44,11 +49,46 @@ while True:
         break
 
 print(nx.info(G))
-nx.write_gexf(G, 'graph.gexf')
+#nx.write_gexf(G, 'graph.gexf')
+"""
 
-pos = graphviz_layout(G, prog='dot')
-nx.draw(G, pos)
+G = graph_build()
+
+
+
+G = set_graph_attributes(G) # sets node attributes
+G = weight_generator(G) # sets edge weights randomly
+timesteps = len(G.node[1]['voltage'])
+
+for t in range(timesteps-1): # iterating over timesteps (minus one because it goes as t+1)
+    print('time is',t)
+    math_functions.voltage_update(G,t)
+    math_functions.conductance_E_update(G,t)
+    math_functions.conductance_I_update(G,t)
+
+
+
+
+
+
+xvalues = np.linspace(0, const.dt * timesteps , timesteps)
+yvalues1 = G.node[1]['voltage']
+yvalues2 = G.node[2]['voltage']
+
+plt.plot(xvalues,yvalues1,linestyle='-.')
+plt.plot(xvalues,yvalues2,linestyle='--')
+
+plt.xlabel('Time',fontsize=14)
+plt.ylabel('Voltage (V)',fontsize=14)
 plt.show()
+
+# pos = graphviz_layout(G, prog='dot')
+# nx.draw(G, pos)
+# plt.show()
+
+plt.savefig()
+
+
 
 
 #dependency injection
