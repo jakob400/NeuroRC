@@ -43,7 +43,7 @@ def voltage_update(G,t):
     # Main Calculations:
         function = ( 1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium )
         G.node[j]['voltage'][t+1] = voltage_now + const.dt * function
-        print(G.node[j]['voltage'][t+1])
+        #print(G.node[j]['voltage'][t+1])
 
     return G
 
