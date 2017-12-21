@@ -16,12 +16,13 @@ def graph_build():
 def set_graph_attributes(G):
 
 	timesteps = 10
-	timetuple = (0,) * timesteps # makes 0-tuple of size 'timesteps'
+	timelist = [0] * timesteps # makes 0-list of size 'timesteps'
 
-	nx.set_node_attributes(G, timetuple, 'voltage')
-	nx.set_node_attributes(G, timetuple, 'conductance_E')
-	nx.set_node_attributes(G, timetuple, 'conductance_A')
-	nx.set_node_attributes(G, timetuple, 'conductance_I')
+	for j in range(len(G.node)):
+		G.node[j].update({'voltage' : timelist})
+		G.node[j].update({'conductance_A' : timelist})
+		G.node[j].update({'conductance_E' : timelist})
+		G.node[j].update({'conductance_I' : timelist})
 
 	return G
 

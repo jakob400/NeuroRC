@@ -7,13 +7,15 @@ import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
 import pygraphviz
 import csv
+import math_functions
+
 
 i=0
 if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 1.2                |-|')
+    print('|-|   NeuroRC: Version 2.0                |-|')
     print('|-|   Author: J Weirathmueller            |-|')
     print('|-|   Last Updated: December 20th, 2017   |-|')
     print(' ===========================================')
@@ -26,8 +28,8 @@ while True:
         while True:
             response = input('What would you like to title the file?\n')
             if (response[-5:] == '.gexf'):
-                nx.write_gexf(G, response)
-                print('file written to' , response)
+                #nx.write_gexf(G, response)
+                #print('file written to' , response)
                 break
             else:
                 print('incorrect file type\n')
@@ -44,11 +46,19 @@ while True:
         break
 
 print(nx.info(G))
-nx.write_gexf(G, 'graph.gexf')
+#nx.write_gexf(G, 'graph.gexf')
 
 
 
-G = set_graph_attributes(G) # sets attributes
+
+G = set_graph_attributes(G) # sets node attributes
+G = weight_generator(G) # sets edge weights randomly
+
+for t in range(len(G.node[1]['voltage'])-1): # iterating over timesteps (minus one because it goes as t+1)
+    print('time is',t)
+    math_functions.voltage_update(G,t)
+    math_functions.conductance_E_update(G,t)
+    math_functions.conductance_I_update(G,t)
 
 
 
