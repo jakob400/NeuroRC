@@ -21,7 +21,7 @@ def sigma_0_fn(voltage_now):
 #    return result
 
 def voltage_update(G,t):
-    """ Voltage Update Euler Calculation. No AHP calculation included"""
+    """Voltage Update Euler Calculation. No AHP calculation included"""
 
     # Constants List:
     # voltage_E, voltage_I, voltage_L, voltage_K
@@ -51,7 +51,7 @@ def voltage_update(G,t):
 
 
 def conductance_E_update(G,t):
-
+    """Excitatory Conductance Update Euler Calculation."""
     # Now Updates:
     for j in range(len(G.node)):
         voltage_now = G.node[j]['voltage'][t] # maybe change to 'G.nodes[]' later
@@ -64,7 +64,7 @@ def conductance_E_update(G,t):
     return G
 
 def conductance_I_update(G,t):
-
+    """Inhibitory Conductance Update Euler Calculation"""
     # Now Updates:
     for j in range(len(G.node)):
         voltage_now = G.node[j]['voltage'][t] # maybe change to 'G.nodes[]' later
@@ -72,12 +72,13 @@ def conductance_I_update(G,t):
         conductance_I_now = G.node[j]['conductance_I'][t]
     # Main Calculations
         summation = 0
-
         for k in G.neighbors(j):
             if(k != j): # possibly unnecessary
                 summation = summation + G[j][k]['weight'] * sigma_fn (voltage_now)
+        #print('sum for node',j,'is',summation)
         function = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_K_max * summation)
         G.node[j]['conductance_I'][t+1] = conductance_I_now + const.dt * function
+        #print(G.node[j]['conductance_I'][t+1])
 
     return G
 
@@ -85,6 +86,6 @@ def conductance_I_update(G,t):
 
     # Future Work:
     #
-    # Ask Dr A what the hell I is
+    # Ask Dr A what I is
     #
     # Include AHP

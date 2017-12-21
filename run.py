@@ -10,6 +10,7 @@ import pygraphviz
 import csv
 import math_functions
 import const
+from voltage_plot import voltage_plot
 
 
 i=0
@@ -17,7 +18,7 @@ if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 2.0.2              |-|')
+    print('|-|   NeuroRC: Version 2.0.3              |-|')
     print('|-|   Author: J Weirathmueller            |-|')
     print('|-|   Last Updated: December 21st, 2017   |-|')
     print(' ===========================================')
@@ -71,23 +72,7 @@ for t in range(timesteps-1): # iterating over timesteps (minus one because it go
 
 
 
-xvalues = np.linspace(0, const.dt * timesteps , timesteps)
-yvalues1 = G.node[1]['voltage']
-yvalues2 = G.node[2]['voltage']
-
-plt.plot(xvalues,yvalues1,linestyle='-.')
-plt.plot(xvalues,yvalues2,linestyle='--')
-
-plt.xlabel('Time',fontsize=14)
-plt.ylabel('Voltage (V)',fontsize=14)
-plt.show()
-
-# pos = graphviz_layout(G, prog='dot')
-# nx.draw(G, pos)
-# plt.show()
-
-plt.savefig()
-
+voltage_plot(G)
 
 
 
