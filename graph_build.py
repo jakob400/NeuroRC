@@ -16,7 +16,8 @@ def set_graph_attributes(G):
 	#timelist = [0] * const.timesteps # makes 0-list of size 'timesteps'
 
 	for j in range(len(G.node)):
-		timelistv = [0] * const.timesteps # makes 0-list of size 'timesteps'
+		v0 = const.voltage_init
+		timelistv = [v0] * const.timesteps # makes v0-list of size 'timesteps'
 		timelistcA = [0] * const.timesteps # makes 0-list of size 'timesteps'
 		timelistcE = [0] * const.timesteps # makes 0-list of size 'timesteps'
 		timelistcI = [0] * const.timesteps # makes 0-list of size 'timesteps'
@@ -30,8 +31,6 @@ def set_graph_attributes(G):
 
 # Future work:
 #
-# Make more node attributes than just voltage
-# Make better initial values (nonzero) for attribute tuples
 
 
 

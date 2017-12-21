@@ -23,14 +23,14 @@ def voltage_plot(G):
 
     plt.plot(x,y1,linestyle='-.')
     plt.plot(x,y2,linestyle='--')
-    plt.text(xmin,ymax + (ywidth/8),'Time Increment (dt) = %.1e' % const.dt,fontsize=14)
+    plt.text(xmin,ymax + (ywidth/8),'Time Increment (dt) = %.2e' % const.dt,fontsize=14)
 
-    plt.xlabel('Time',fontsize=14)
+    plt.xlabel('Time (s)',fontsize=14)
     plt.ylabel('Voltage (V)',fontsize=14)
 
     plt.legend(['Neuron %d'%(nnumber1),'Neuron %d'%(nnumber2)])
 
-    plt.savefig('figures/dt%.1eN%dK%dP%d.png'%(const.dt,const.N,const.K,const.P))
+    plt.savefig('figures/dt%.2eN%dK%dP%d.png'%(const.dt,const.N,const.K,const.P))
     plt.show()
 
     return

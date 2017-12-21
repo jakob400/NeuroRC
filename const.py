@@ -28,7 +28,14 @@ I                 = 1e-6 #no clue what this is
 
 # Graph Building
 timesteps         = 100
-dt                = 1.5e-3      # sec (time increment)
-N                 = 250  # number of nodes
-K                 = 50  # average degree
-P                 = 5 * 10e-2
+dt                = 2e-3      # sec (time increment)
+
+N                 = 1000  # number of nodes
+K                 = 5  # average degree
+P                 = 5e-3
+
+# Initial Values
+voltage_init            = -70e-3 #volts
+conductance_A_init      = 0 #Sieverts
+conductance_E_init      = 0 #Sieverts
+conductance_I_init      = 0 #Sieverts
