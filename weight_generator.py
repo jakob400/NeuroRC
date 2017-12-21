@@ -11,5 +11,4 @@ def getWeight(): #returns random number between n and N, to 'decimals' decimals
 def weight_generator(G): #adds random weights to graph g
     for i,j,k in G.edges(data = True):
         G[i][j]['weight'] = getWeight()
-        #print(g[i][j]['weight'])
     return G

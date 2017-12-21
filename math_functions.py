@@ -43,8 +43,6 @@ def voltage_update(G,t):
     # Main Calculations:
         function = ( 1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium )
         G.node[j]['voltage'][t+1] = voltage_now + const.dt * function
-        #print(G.node[j]['voltage'][t+1])
-
     return G
 
 
@@ -73,12 +71,18 @@ def conductance_I_update(G,t):
     # Main Calculations
         summation = 0
         for k in G.neighbors(j):
-            if(k != j): # possibly unnecessary
+            if(k != j): #unnecessary unless MultiGraph
                 summation = summation + G[j][k]['weight'] * sigma_fn (voltage_now)
         #print('sum for node',j,'is',summation)
         function = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_K_max * summation)
         G.node[j]['conductance_I'][t+1] = conductance_I_now + const.dt * function
-        #print(G.node[j]['conductance_I'][t+1])
+
+        #if(j==1):
+        #    print('node 1', G.node[1]['conductance_I'][t+1])
+        #if(j==2):
+        #    print('node 2', G.node[2]['conductance_I'][t+1])
+    #print('AFTER node 1', G.node[1]['conductance_I'][t+1])
+    #print('AFTER node 2', G.node[2]['conductance_I'][t+1])
 
     return G
 

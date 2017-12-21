@@ -13,13 +13,17 @@ def graph_build():
 
 def set_graph_attributes(G):
 
-	timelist = [0] * const.timesteps # makes 0-list of size 'timesteps'
+	#timelist = [0] * const.timesteps # makes 0-list of size 'timesteps'
 
 	for j in range(len(G.node)):
-		G.node[j].update({'voltage' : timelist})
-		G.node[j].update({'conductance_A' : timelist})
-		G.node[j].update({'conductance_E' : timelist})
-		G.node[j].update({'conductance_I' : timelist})
+		timelistv = [0] * const.timesteps # makes 0-list of size 'timesteps'
+		timelistcA = [0] * const.timesteps # makes 0-list of size 'timesteps'
+		timelistcE = [0] * const.timesteps # makes 0-list of size 'timesteps'
+		timelistcI = [0] * const.timesteps # makes 0-list of size 'timesteps'
+		G.node[j].update({'voltage' : timelistv})
+		G.node[j].update({'conductance_A' : timelistcA})
+		G.node[j].update({'conductance_E' : timelistcE})
+		G.node[j].update({'conductance_I' : timelistcI})
 
 	return G
 
