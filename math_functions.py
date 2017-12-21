@@ -72,8 +72,9 @@ def conductance_I_update(G,t):
         conductance_I_now = G.node[j]['conductance_I'][t]
     # Main Calculations
         summation = 0
-        for k in range(len(G.node)):
-            if(k != j):
+
+        for k in G.neighbors(j):
+            if(k != j): # possibly unnecessary
                 summation = summation + G[j][k]['weight'] * sigma_fn (voltage_now)
         function = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_K_max * summation)
         G.node[j]['conductance_I'][t+1] = conductance_I_now + const.dt * function

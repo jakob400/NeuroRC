@@ -1,22 +1,19 @@
 import networkx as nx
 from weight_generator import weight_generator
 import random
+import const
 
 def graph_build():
-	N = 250  # number of nodes
-	K = 230  # average degree
-	P = 5 * 10e-2
 
 	seed_no = random.uniform(1,10000)
-	G = nx.newman_watts_strogatz_graph(N,K,P,seed=seed_no)
+	G = nx.newman_watts_strogatz_graph(const.N,const.K,const.P,seed=seed_no)
 	G.name = 'Jakob\'s Model Network'
 
 	return G
 
 def set_graph_attributes(G):
 
-	timesteps = 10
-	timelist = [0] * timesteps # makes 0-list of size 'timesteps'
+	timelist = [0] * const.timesteps # makes 0-list of size 'timesteps'
 
 	for j in range(len(G.node)):
 		G.node[j].update({'voltage' : timelist})

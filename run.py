@@ -17,12 +17,13 @@ if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 2.0.1              |-|')
+    print('|-|   NeuroRC: Version 2.0.2              |-|')
     print('|-|   Author: J Weirathmueller            |-|')
-    print('|-|   Last Updated: December 20th, 2017   |-|')
+    print('|-|   Last Updated: December 21st, 2017   |-|')
     print(' ===========================================')
     i = i+1
 
+"""
 while True:
     response = input('Would you like to generate a new graph? (y/n)\n')
     if (response == 'y'):
@@ -49,7 +50,9 @@ while True:
 
 print(nx.info(G))
 #nx.write_gexf(G, 'graph.gexf')
+"""
 
+G = graph_build()
 
 
 
@@ -64,10 +67,17 @@ for t in range(timesteps-1): # iterating over timesteps (minus one because it go
     math_functions.conductance_I_update(G,t)
 
 
-xvalues = np.linspace(0, const.dt * timesteps , timesteps)
-yvalues = G.node[1]['voltage']
 
-plt.plot(xvalues,yvalues,linestyle='--')
+
+
+
+xvalues = np.linspace(0, const.dt * timesteps , timesteps)
+yvalues1 = G.node[1]['voltage']
+yvalues2 = G.node[2]['voltage']
+
+plt.plot(xvalues,yvalues1,linestyle='-.')
+plt.plot(xvalues,yvalues2,linestyle='--')
+
 plt.xlabel('Time',fontsize=14)
 plt.ylabel('Voltage (V)',fontsize=14)
 plt.show()
@@ -75,6 +85,8 @@ plt.show()
 # pos = graphviz_layout(G, prog='dot')
 # nx.draw(G, pos)
 # plt.show()
+
+plt.savefig()
 
 
 
