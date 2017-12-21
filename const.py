@@ -28,7 +28,7 @@ I                 = 1e-6 #no clue what this is
 
 # Graph Building
 timesteps         = 100
-dt                = 1.7465e-3      # sec (time increment)
+dt                = 1.5e-3      # sec (time increment)
 N                 = 250  # number of nodes
 K                 = 50  # average degree
 P                 = 5 * 10e-2
