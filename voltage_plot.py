@@ -29,8 +29,9 @@ def voltage_plot(G):
     plt.ylabel('Voltage (V)',fontsize=14)
 
     plt.legend(['Neuron %d'%(nnumber1),'Neuron %d'%(nnumber2)])
+    plt.tight_layout()
 
-    plt.savefig('figures/dt%.2eN%dK%dP%d.png'%(const.dt,const.N,const.K,const.P))
+    plt.savefig('figures/dt%.2eN%dK%dP%.2e.png'%(const.dt,const.N,const.K,const.P))
     plt.show()
 
     return

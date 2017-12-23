@@ -14,18 +14,8 @@ def sigma_0_fn(voltage_now):
     return result
 
 
-#def v_update_fn(v, dt): #euler update scheme
-#    alpha = - (_G_L) / _C # more terms to be added later
-#    beta =  ( _V_L * _G_L ) / ( _G_L ) #more terms to be added later
-#    result = beta + ( v - beta ) * math.exp( alpha * dt )
-#    return result
-
 def voltage_update(G,t):
     """Voltage Update Euler Calculation. No AHP calculation included"""
-
-    # Constants List:
-    # voltage_E, voltage_I, voltage_L, voltage_K
-    # conductance_L, conductance_K_max (variable(?))
 
     # Now Updates:
     for j in range(len(G.node)):
@@ -41,9 +31,9 @@ def voltage_update(G,t):
         potassium = (const.voltage_K - voltage_now) * (const.conductance_K_max * sigma_0_fn(voltage_now) + conductance_A_now)
 
     # Main Calculations:
-        function = ( 1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium )
-        G.node[j]['voltage'][t+1] = voltage_now + const.dt * function
-    return G
+        function = ( 1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium ) #potassium includes AHP, due to equation
+        G.node[j]['voltage'][t+1] = voltage_now + const.dt * function 
+    return function
 
 
 
@@ -58,8 +48,7 @@ def conductance_E_update(G,t):
     # Main Calculations:
         function = (-1 * const._a_E * conductance_E_now + const.I)
         G.node[j]['conductance_E'][t+1] = conductance_E_now + const.dt * function
-
-    return G
+    return function
 
 def conductance_I_update(G,t):
     """Inhibitory Conductance Update Euler Calculation"""
@@ -73,23 +62,23 @@ def conductance_I_update(G,t):
         for k in G.neighbors(j):
             if(k != j): #unnecessary unless MultiGraph
                 summation = summation + G[j][k]['weight'] * sigma_fn (voltage_now)
-        #print('sum for node',j,'is',summation)
         function = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_K_max * summation)
         G.node[j]['conductance_I'][t+1] = conductance_I_now + const.dt * function
+    return function
 
-        #if(j==1):
-        #    print('node 1', G.node[1]['conductance_I'][t+1])
-        #if(j==2):
-        #    print('node 2', G.node[2]['conductance_I'][t+1])
-    #print('AFTER node 1', G.node[1]['conductance_I'][t+1])
-    #print('AFTER node 2', G.node[2]['conductance_I'][t+1])
-
-    return G
-
-
+def conductance_A_update(G,t):
+    """AHP Conductance Update Euler Calculation"""
+    # Now Updates:
+    for j in range(len(G.node)):
+        voltage_now = G.node[j]['voltage'][t] # maybe change to 'G.nodes[]' later
+        conductance_E_now = G.node[j]['conductance_E'][t]
+        conductance_I_now = G.node[j]['conductance_I'][t]
+        conductance_A_now = G.node[j]['conductance_A'][t]
+    # Main Calculation
+        function = -1 * const._a_A * conductance_A_now + const._a_A * const.w_A * const.conductance_A_max * sigma_fn (voltage_now)
+        G.node[j]['conductance_A'][t+1] = conductance_A_now + const.dt * function
+    return function
 
     # Future Work:
     #
-    # Ask Dr A what I is
-    #
-    # Include AHP
+    # Find correct values for I, w_A, conductance_A_max
