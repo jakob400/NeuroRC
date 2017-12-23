@@ -32,7 +32,7 @@ def voltage_update(G,t):
 
     # Main Calculations:
         function = ( 1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium ) #potassium includes AHP, due to equation
-        G.node[j]['voltage'][t+1] = voltage_now + const.dt * function
+        G.node[j]['voltage'][t+1] = voltage_now + const.dt * function 
     return function
 
 

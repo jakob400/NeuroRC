@@ -18,9 +18,9 @@ if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 2.0.6              |-|')
+    print('|-|   NeuroRC: Version 2.0.7              |-|')
     print('|-|   Author: J Weirathmueller            |-|')
-    print('|-|   Last Updated: December 21st, 2017   |-|')
+    print('|-|   Last Updated: December 23rd, 2017   |-|')
     print(' ===========================================')
     i = i+1
 
@@ -44,8 +44,8 @@ for t in range(timesteps-1): # iterating over timesteps (minus one because it go
             func_E = math_functions.conductance_E_update(G,t)
         if (func_I < (const.epsilon * M)):
             func_I = math_functions.conductance_I_update(G,t)
-        if (func_A < (const.epsilon * M)):
-            func_A = math_functions.conductance_A_update(G,t)
+        #if (func_A < (const.epsilon * M)):
+        #    func_A = math_functions.conductance_A_update(G,t)
     else:
         func_v = math_functions.voltage_update(G,t)
         func_E = math_functions.conductance_E_update(G,t)
