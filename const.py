@@ -1,3 +1,7 @@
+def timestep_calc (total_time, dt):
+    result = int(total_time / dt)
+    return result
+
 # Experimental values for constants used in the striatum model
 
 # Inverse Time Constants
@@ -7,7 +11,7 @@ _a_A = 1e3     #(sec)^-1
 
 
 # Channel Reversing Potentials
-voltage_E = 0e-3     #(V) - excitatory
+voltage_E = 50e-3     #(V) - excitatory
 voltage_L = -65e-3   #(V) - leakage
 voltage_I = -75e-3   #(V) - inhibitory
 voltage_K = -90e-3   #(V) - potassium
@@ -25,12 +29,16 @@ voltage_thresh    = -50e-3   #(V) - firing threshold
 _beta             = 0.08e3   #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
 w_A               = 1e-2        # scale factor for AHP
 I                 = 1e-2        # striatal afferents determined by cortical afferents (should make dynamic later)
-epsilon           = 1     # Constraint on dynamics
+epsilon           = 1e1     # Constraint on dynamics
 
 
 # Graph Building
-timesteps         = 50
-dt                = 1e-4      # sec (time increment)
+
+total_time        = 0.0030
+dt                = 1e-5      # sec (time increment)
+
+timesteps         = timestep_calc(total_time, dt)
+
 
 N                 = 1000  # number of nodes
 K                 = 7  # average degree

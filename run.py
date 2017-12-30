@@ -18,9 +18,9 @@ if (i == 0):
     os.system('cls' if os.name == 'nt' else 'clear')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(' ===========================================')
-    print('|-|   NeuroRC: Version 2.0.7              |-|')
+    print('|-|   NeuroRC: Version 2.0.8              |-|')
     print('|-|   Author: J Weirathmueller            |-|')
-    print('|-|   Last Updated: December 23rd, 2017   |-|')
+    print('|-|   Last Updated: December 30th, 2017   |-|')
     print(' ===========================================')
     i = i+1
 
@@ -36,23 +36,29 @@ timesteps = len(G.node[1]['voltage'])
 
 
 for t in range(timesteps-1): # iterating over timesteps (minus one because it goes as t+1)
+    """
     if (t>0): # Can't do this the first round. Maybe find better way.
         M = max(func_v,func_E,func_I,func_A)
         if (func_v < (const.epsilon * M)): # Does this only if the change is not too great
-            func_v = math_functions.voltage_update(G,t)
+            G,func_v = math_functions.voltage_update(G,t)
+            print(func_v)
         if (func_E < (const.epsilon * M)):
-            func_E = math_functions.conductance_E_update(G,t)
+            G,func_E = math_functions.conductance_E_update(G,t)
         if (func_I < (const.epsilon * M)):
-            func_I = math_functions.conductance_I_update(G,t)
-        #if (func_A < (const.epsilon * M)):
-        #    func_A = math_functions.conductance_A_update(G,t)
+            G,func_I = math_functions.conductance_I_update(G,t)
+        if (func_A < (const.epsilon * M)):
+            G,func_A = math_functions.conductance_A_update(G,t)
     else:
-        func_v = math_functions.voltage_update(G,t)
-        func_E = math_functions.conductance_E_update(G,t)
-        func_I = math_functions.conductance_I_update(G,t)
-        func_A = math_functions.conductance_A_update(G,t)
-
-
+        print(t)
+        G,func_v = math_functions.voltage_update(G,t)
+        G,func_E = math_functions.conductance_E_update(G,t)
+        G,func_I = math_functions.conductance_I_update(G,t)
+        G,func_A = math_functions.conductance_A_update(G,t)
+    """
+    G,func_v = math_functions.voltage_update(G,t)
+    G,func_E = math_functions.conductance_E_update(G,t)
+    G,func_I = math_functions.conductance_I_update(G,t)
+    G,func_A = math_functions.conductance_A_update(G,t)
 
 
 

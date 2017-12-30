@@ -2,7 +2,7 @@ import random
 import networkx as nx
 
 small = 0
-large = 1
+large = 100
 decimals = 5
 
 def getWeight(): #returns random number between n and N, to 'decimals' decimals
