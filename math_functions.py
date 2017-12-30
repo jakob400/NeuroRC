@@ -32,8 +32,8 @@ def voltage_update(G,t):
 
     # Main Calculations:
         function = ( 1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium ) #potassium includes AHP, due to equation
-        G.node[j]['voltage'][t+1] = voltage_now + const.dt * function 
-    return function
+        G.node[j]['voltage'][t+1] = voltage_now + const.dt * function
+    return G,function
 
 
 
@@ -48,7 +48,7 @@ def conductance_E_update(G,t):
     # Main Calculations:
         function = (-1 * const._a_E * conductance_E_now + const.I)
         G.node[j]['conductance_E'][t+1] = conductance_E_now + const.dt * function
-    return function
+    return G,function
 
 def conductance_I_update(G,t):
     """Inhibitory Conductance Update Euler Calculation"""
@@ -64,7 +64,7 @@ def conductance_I_update(G,t):
                 summation = summation + G[j][k]['weight'] * sigma_fn (voltage_now)
         function = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_K_max * summation)
         G.node[j]['conductance_I'][t+1] = conductance_I_now + const.dt * function
-    return function
+    return G,function
 
 def conductance_A_update(G,t):
     """AHP Conductance Update Euler Calculation"""
@@ -77,8 +77,12 @@ def conductance_A_update(G,t):
     # Main Calculation
         function = -1 * const._a_A * conductance_A_now + const._a_A * const.w_A * const.conductance_A_max * sigma_fn (voltage_now)
         G.node[j]['conductance_A'][t+1] = conductance_A_now + const.dt * function
-    return function
+    return G,function
 
     # Future Work:
     #
     # Find correct values for I, w_A, conductance_A_max
+    #
+    # Correct issue where only last function would be returned
+    #
+    # Maybe change order of calculations. 
