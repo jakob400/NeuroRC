@@ -27,22 +27,22 @@ _k                = 0.08e3   #(V)^-1 - slope of the sigmoid (smaller is more gra
 voltage_0         = -45e-3   #(V) -
 voltage_thresh    = -50e-3   #(V) - firing threshold
 _beta             = 0.08e3   #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
-w_A               = 1e-2        # scale factor for AHP
-I                 = 1e-2        # striatal afferents determined by cortical afferents (should make dynamic later)
-epsilon           = 1e1     # Constraint on dynamics
+w_A               = 1e-2     # scale factor for AHP
+I                 = 1e-2     # striatal afferents determined by cortical afferents (should make dynamic later)
+epsilon           = 10       # Constraint on dynamics
 
 
 # Graph Building
 
-total_time        = 0.0030
+total_time        = 0.01
 dt                = 1e-5      # sec (time increment)
-
 timesteps         = timestep_calc(total_time, dt)
+lowrand           = 1e-5
+highrand          = 1e-2
 
-
-N                 = 1000  # number of nodes
+N                 = 500  # number of nodes
 K                 = 7  # average degree
-P                 = 1#1e-5#2e-3
+P                 = 1e-5 # 2e-3
 
 # Initial Values
 voltage_init            = -70e-3 #volts

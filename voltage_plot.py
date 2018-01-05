@@ -5,9 +5,9 @@ import const
 def voltage_plot(G):
 
     nnumber1 = 1
-    nnumber2 = 50 # Neurons to graph
+    nnumber2 = 5 # Neurons to graph
 
-    timesteps = len(G.node[1]['voltage'])
+    timesteps = const.timesteps
 
     x = np.linspace(0, const.dt * timesteps , timesteps)
     y1 = G.node[nnumber1]['voltage']
@@ -23,7 +23,8 @@ def voltage_plot(G):
 
     plt.plot(x,y1,linestyle='-.')
     plt.plot(x,y2,linestyle='--')
-    plt.text(xmin,ymax + (ywidth/8),'Time Increment (dt) = %.2e' % const.dt,fontsize=14)
+    #plt.text(xmin,ymin,'Time Increment (dt) = %.2e' % const.dt,fontsize=14)
+    plt.title('dt = %.2e, epsilon = %.2e' % (const.dt,const.epsilon),fontsize=14)
 
     plt.xlabel('Time (s)',fontsize=14)
     plt.ylabel('Voltage (V)',fontsize=14)
