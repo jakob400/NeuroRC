@@ -2,13 +2,12 @@ def timestep_calc (total_time, dt):
     result = int(total_time / dt)
     return result
 
-# Experimental values for constants used in the striatum model
+### Experimental values for constants used in the striatum model
 
 # Inverse Time Constants
 _a_E = 1e3     #(sec)^-1
 _a_I = 0.2e3   #(sec)^-1
 _a_A = 1e3     #(sec)^-1
-
 
 # Channel Reversing Potentials
 voltage_E = 50e-3     #(V) - excitatory
@@ -18,27 +17,28 @@ voltage_K = -90e-3   #(V) - potassium
 
 
 # Assorted
-conductance_L     = 28e-9    #Sieverts - leakage conductance
-conductance_K_max = 25e-9    #Sieverts - range (0<x<50) change later? Saturation value for K channel
-conductance_A_max = 25e-9    #Sieverts - Not sure what this should be. Saturation value for K channel
+conductance_L     = 28e-9    #Siemens - leakage conductance
+conductance_K_max = 25e-9    #Siemens - range (0<x<50) change later? Saturation value for K channel
+conductance_A_max = 25e-9    #Siemens - Not sure what this should be. Saturation value for AHP channel
 
 capacitance       = 0.5e-9   #F - capacitance of cell membrane
-_k                = 0.08e3   #(V)^-1 - slope of the sigmoid (smaller is more gradual)
+_k                = 8e1      #(V)^-1 - slope of the sigmoid (smaller is more gradual)
 voltage_0         = -45e-3   #(V) -
 voltage_thresh    = -50e-3   #(V) - firing threshold
-_beta             = 0.08e3   #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
+_beta             = 8e1      #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
 w_A               = 1e-2     # scale factor for AHP
-I                 = 1e-2     # striatal afferents determined by cortical afferents (should make dynamic later)
-epsilon           = 10       # Constraint on dynamics
+I                 = 1e-3     # striatal afferents determined by cortical afferents (should make dynamic later)
+epsilon           = 1e-3     # Constraint on dynamics
+
+tMax              = 500    # (sec)
 
 
 # Graph Building
 
-total_time        = 0.01
-dt                = 1e-5      # sec (time increment)
-timesteps         = timestep_calc(total_time, dt)
-lowrand           = 1e-5
-highrand          = 1e-2
+total_time        = 1e-2
+dt_list           = []
+lowrand           = -1e-3
+highrand          = 1e-3
 
 N                 = 500  # number of nodes
 K                 = 7  # average degree
@@ -46,6 +46,28 @@ P                 = 1e-5 # 2e-3
 
 # Initial Values
 voltage_init            = -70e-3 #volts
-conductance_A_init      = 0 #Sieverts
-conductance_E_init      = 0 #Sieverts
-conductance_I_init      = 0 #Sieverts
+conductance_A_init      = 10e-9 #Siemens
+conductance_E_init      = 10e-9 #Siemens
+conductance_I_init      = 10e-9 #Siemens
+
+### Experimental values for constants used in the LIF model
+
+g_syn                   = 0.2 # Firing amplitude
+I_ext                   = 0.85
+
+# Inverse time constants
+
+_a_m                    = 1e3     #(sec)^-1
+
+# Time constants
+
+_tau_D                  = 1e-1 # (sec) Delay time
+
+
+
+# TO DO
+# Find initial conductances
+#
+# Find out why it fires too early (-68mV)
+#
+# Write out constants in LateX
