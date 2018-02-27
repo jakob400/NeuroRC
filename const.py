@@ -22,26 +22,26 @@ conductance_K_max = 25e-9    #Siemens - range (0<x<50) change later? Saturation 
 conductance_A_max = 25e-9    #Siemens - Not sure what this should be. Saturation value for AHP channel
 
 capacitance       = 0.5e-9   #F - capacitance of cell membrane
-_k                = 8e1      #(V)^-1 - slope of the sigmoid (smaller is more gradual)
+_k                = 8e-1      #(V)^-1 - slope of the sigmoid (smaller is more gradual)
 voltage_0         = -45e-3   #(V) -
 voltage_thresh    = -50e-3   #(V) - firing threshold
-_beta             = 8e1      #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
+_beta             = 8e-1      #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
 w_A               = 1e-2     # scale factor for AHP
 I                 = 1e-3     # striatal afferents determined by cortical afferents (should make dynamic later)
 epsilon           = 1e-3     # Constraint on dynamics
 
-tMax              = 500    # (sec)
+tMax              = 10000    # (steps)
 
 
 # Graph Building
 
-total_time        = 1e-2
+total_time        = 1e-3
 dt_list           = []
 lowrand           = -1e-3
 highrand          = 1e-3
 
-N                 = 500  # number of nodes
-K                 = 7  # average degree
+N                 = 2#500  # number of nodes
+K                 = 1#7  # average degree
 P                 = 1e-5 # 2e-3
 
 # Initial Values
@@ -52,16 +52,16 @@ conductance_I_init      = 10e-9 #Siemens
 
 ### Experimental values for constants used in the LIF model
 
-g_syn                   = 0.2 # Firing amplitude
-I_ext                   = 0.85
+g_syn                   = 2e-3 # Firing amplitude
+I_ext                   = 30e-3#0.85
 
 # Inverse time constants
 
-_a_m                    = 1e3     #(sec)^-1
+_a_m                    = 1e3     #(sec)^-1 # inverse of tau_m
 
 # Time constants
 
-_tau_D                  = 1e-1 # (sec) Delay time
+_tau_D                  = 1e-4 # (sec) Delay time
 
 
 

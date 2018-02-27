@@ -1,11 +1,12 @@
 import math
+import numpy as np
 import const
 import networkx as nx
 import random
 
 
 def get_Rand():
-    state = get_Sign() * round(random.uniform(const.lowrand,const.highrand), int(random.uniform(10,15)))
+    state = get_Sign() * round(np.random.normal(0,5e-5), int(random.uniform(10,15)))
     return state
 
 def get_Sign():
@@ -36,14 +37,19 @@ def delta(neighbor_voltages,t):
     return summation
 
 def delay(t):
+    """ Calculates how many timesteps ago _tau_D is  """
     dt_sum = 0
     i = 0
-    while( dt_sum < const._tau_D ): # Calculates how many timesteps back _tau_D is.
+    while( dt_sum < const._tau_D ):
         if(len(const.dt_list) > i): # Does not proceed if list of dt's is not long enough.
             dt_sum += const.dt_list[-i-1]
             i += 1
         else:
             break
+    print('dt_sum is',dt_sum)
+    print('_tau_D is',const._tau_D)
+    print('steps back is',i)
+    print('time_delayed is ', t-i,'\n')
     return t-i
 
 

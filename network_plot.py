@@ -14,6 +14,7 @@ def network_plot(G,t):
     plt.colorbar(nc) # node color
 
     plt.savefig('Animation Files/%d.png' %(t))
+    print('title of png is ',t,'\n')
     plt.clf()
 
 
@@ -23,5 +24,5 @@ def network_plot(G,t):
 #
 #Find better layout for visualization
 #
-#
+#Do a firing map
 #
