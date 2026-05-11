@@ -24,7 +24,9 @@ def update_state_LIF(G, state, t):
     summation = _neighbor_sigma_sum(state, sigma_delayed)
     func_v = const._a_m * (-V_now + const.I_ext + const.g_syn * summation)
 
-    best_dt = const.epsilon / np.max(np.abs(func_v))
+    max_mag = np.max(np.abs(func_v))
+    best_dt = const.dt_max if max_mag == 0 else const.epsilon / max_mag
+    best_dt = min(max(best_dt, const.dt_floor), const.dt_max)
     state.dt_list.append(best_dt)
     dt = best_dt
     state.current_time += dt
@@ -71,7 +73,8 @@ def update_state_STR(G, state, t):
 
     max_mag = np.max(np.maximum.reduce([np.abs(func_v), np.abs(func_A),
                                         np.abs(func_E), np.abs(func_I)]))
-    best_dt = const.epsilon / max_mag
+    best_dt = const.dt_max if max_mag == 0 else const.epsilon / max_mag
+    best_dt = min(max(best_dt, const.dt_floor), const.dt_max)
     state.dt_list.append(best_dt)
     dt = best_dt
     state.current_time += dt

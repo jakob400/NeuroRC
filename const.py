@@ -56,6 +56,13 @@ tMax              = 10000    # (steps)
 fixed_dt_mode     = True
 dt_fixed          = 25e-6    # (s) - 25 us; bracketed by spike-rise time and AMPA tau
 
+# Adaptive Euler safety clamps. At equilibrium f(V) -> 0, so epsilon/max|f|
+# diverges and a single step can leap simulated time by years. dt_max bounds
+# that; dt_floor prevents an enormous spike-rise burst from collapsing dt
+# below numerical resolution. Active only when fixed_dt_mode=False.
+dt_floor          = 1e-9     # (s)
+dt_max            = 1e-3     # (s)
+
 
 # Graph Building
 
