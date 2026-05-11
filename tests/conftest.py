@@ -1,8 +1,8 @@
-"""Make the repo root importable so tests can `import simulate` directly."""
+"""Make src/ importable so tests can `import simulate` directly."""
 
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
+SRC = Path(__file__).resolve().parent.parent / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))

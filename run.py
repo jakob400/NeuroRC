@@ -1,4 +1,11 @@
 import os
+import sys
+from pathlib import Path
+
+# Make src/ importable when run.py is invoked from the repo root.
+_SRC = Path(__file__).resolve().parent / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 import const
 from simulate import simulate
