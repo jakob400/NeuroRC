@@ -60,6 +60,19 @@ def test_S_from_dt_basic():
     assert S.max() > 1.5, S.max()
 
 
+def test_resample_uniform_recovers_linear_trace():
+    """A linearly-varying V trace resampled onto a coarser uniform grid
+    should still be linear up to small interpolation error."""
+    n_steps = 200
+    dts = np.full(n_steps - 1, 1e-3)  # 1 ms steps -> 199 ms total
+    t = np.concatenate(([0.0], np.cumsum(dts)))
+    V = np.stack([t, -t], axis=1)  # shape (200, 2), linear in t
+    t_target, V_out = ews.resample_uniform(V, dts, dt_target_ms=2.0)
+    # Linear should reproduce exactly under linear interp.
+    np.testing.assert_allclose(V_out[:, 0], t_target, atol=1e-12)
+    np.testing.assert_allclose(V_out[:, 1], -t_target, atol=1e-12)
+
+
 def test_population_rate_matches_construction():
     """Synthesize a V trace with known number of spikes and check rate."""
     n_steps, N = 5000, 100

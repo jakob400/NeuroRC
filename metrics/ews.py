@@ -55,6 +55,46 @@ def population_rate(V_history, dt, V_reset, bin_ms=1.0):
     return counts / (V.shape[1] * bin_dt)
 
 
+def resample_uniform(V_history, dt_list, dt_target_ms=1.0):
+    """Resample a non-uniformly-timed per-step trace onto a uniform grid.
+
+    Under adaptive Euler each row of ``V_history`` corresponds to a
+    different ``dt``; the cumulative sum of ``dt_list`` recovers the
+    absolute time of each row.
+
+    Parameters
+    ----------
+    V_history : ndarray, shape (n_steps, N)
+        Per-step per-neuron trace.
+    dt_list : sequence of float
+        Per-step dt; length ``n_steps - 1`` (the first row is t=0 init).
+    dt_target_ms : float
+        Output sample spacing in milliseconds.
+
+    Returns
+    -------
+    t : ndarray, shape (n_out,)
+    V_out : ndarray, shape (n_out, N)
+    """
+    V = np.asarray(V_history, dtype=np.float64)
+    dts = np.asarray(dt_list, dtype=np.float64)
+    n_steps, N = V.shape
+    if dts.size == n_steps:
+        t = np.concatenate(([0.0], np.cumsum(dts)))[:n_steps]
+    elif dts.size == n_steps - 1:
+        t = np.concatenate(([0.0], np.cumsum(dts)))
+    else:
+        raise ValueError('dt_list length %d incompatible with V_history '
+                         '%d rows' % (dts.size, n_steps))
+    t_target = np.arange(t[0], t[-1], dt_target_ms * 1e-3)
+    if t_target.size < 2:
+        return t_target, np.empty((0, N))
+    V_out = np.empty((t_target.size, N), dtype=np.float64)
+    for j in range(N):
+        V_out[:, j] = np.interp(t_target, t, V[:, j])
+    return t_target, V_out
+
+
 def _rolling_apply(x, window_steps, step_steps, fn):
     n = x.shape[0]
     if n < window_steps:
