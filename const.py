@@ -29,12 +29,13 @@ voltage_thresh    = -50e-3   #(V) - half-activation voltage for sigma_0 (not the
 
 # Spike-reset policy (BIO-7): integrate-and-fire with a hard threshold.
 # When V crosses V_thresh, V is set to V_reset and held there for t_refr.
-# -42 mV (down from -40 mV) lands the network in the 0.5-2 Hz/neuron
-# physiological MSN regime at the Poisson defaults below; -40 mV sat just
-# above the Poisson-driven g_E_ss and produced 0 Hz under fixed-dt Heun.
-# -42 mV is within the literature window (Wilson & Kawaguchi 1996; Mahon
-# 2006). See BIO-6.2 follow-up in PLAN.md.
-V_thresh          = -42e-3   #(V) - spike threshold
+# -41 mV: D1 recalibration. GRAPH-3's directed-adjacency fix halved the
+# recurrent inhibition density that the prior -42 mV setting was tuned
+# against, pushing the network to 18 Hz/neuron. scripts/diag_recalibrate_
+# directed.py sweeps V_thresh and confirms -41 mV restores the 0.5-2
+# Hz/neuron physiological MSN regime (literature window: Wilson &
+# Kawaguchi 1996; Mahon 2006). See DIAGNOSTICS.md D1/D4.
+V_thresh          = -41e-3   #(V) - spike threshold
 V_reset           = -70e-3   #(V) - post-spike voltage
 t_refr            = 2e-3     #(s) - absolute refractory period
 _beta             = 250      #(V)^-1 - slope of sigma (Ponzi-Wickens 2010); matched to _k for STR threshold gating
