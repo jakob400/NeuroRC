@@ -1,3 +1,5 @@
+import random
+
 import math_functions as fn
 import const
 
@@ -83,7 +85,10 @@ def update_state_STR(G,t):
 
     # Func Calculations:
         func_v[j] = (1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium) # potassium includes AHP, due to equation
-        func_E[j] = (-1 * const._a_E * conductance_E_now + const.I)
+        if const.drive_mode == 'constant':
+            func_E[j] = -1 * const._a_E * conductance_E_now + const.I
+        else:
+            func_E[j] = -1 * const._a_E * conductance_E_now
         func_A[j] = -1 * const._a_A * conductance_A_now + const._a_A * const.w_A * const.conductance_A_max * fn.sigma(voltage_now)
         summation = 0
         for k in G.neighbors(j):
@@ -105,15 +110,21 @@ def update_state_STR(G,t):
     dt_list.append(best_dt) # Appends new dt to list of dt's
 
 
-    # Main Calculations
+    # Main Calculations - reads per-neuron prior state from G.nodes[j][...][t]
+    dt = dt_list[-1]
+    poisson_p = const.poisson_rate * dt if const.drive_mode == 'poisson' else 0.0
     for j in range(N):
-        G.nodes[j]['voltage'].append(voltage_now + dt_list[-1] * func_v[j])        # Use [-1] or [t]. Should be equivalent.
-        G.nodes[j]['conductance_E'].append(conductance_E_now + dt_list[-1] * func_E[j])
-        G.nodes[j]['conductance_I'].append(conductance_I_now + dt_list[-1] * func_I[j])
-        G.nodes[j]['conductance_A'].append(conductance_A_now + dt_list[-1] * func_A[j])
-
-
-
+        v_prev  = G.nodes[j]['voltage'][t]
+        gE_prev = G.nodes[j]['conductance_E'][t]
+        gI_prev = G.nodes[j]['conductance_I'][t]
+        gA_prev = G.nodes[j]['conductance_A'][t]
+        gE_new = gE_prev + dt * func_E[j]
+        if poisson_p > 0.0 and random.random() < poisson_p:
+            gE_new += const.poisson_delta_g_E
+        G.nodes[j]['voltage'].append(v_prev + dt * func_v[j])
+        G.nodes[j]['conductance_E'].append(gE_new)
+        G.nodes[j]['conductance_I'].append(gI_prev + dt * func_I[j])
+        G.nodes[j]['conductance_A'].append(gA_prev + dt * func_A[j])
 
     time_taken = sum(dt_list) # sums up all dt's
     return G, time_taken

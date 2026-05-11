@@ -28,7 +28,15 @@ voltage_0         = -45e-3   #(V) -
 voltage_thresh    = -50e-3   #(V) - firing threshold
 _beta             = 250      #(V)^-1 - slope of sigma (Ponzi-Wickens 2010); matched to _k for STR threshold gating
 w_A               = 0.5      # scale factor for AHP - lifted from 0.01 so adaptation reaches ~1% of leak current at saturation (Ponzi-Wickens 2010)
-I                 = 1e-3     # striatal afferents determined by cortical afferents (should make dynamic later)
+I                 = 1e-3     # constant cortical drive (used only when drive_mode == 'constant')
+
+# Cortical drive: 'constant' keeps the legacy +I term in func_E; 'poisson'
+# drops it and instead delivers Poisson-distributed excitatory kicks of size
+# poisson_delta_g_E at rate poisson_rate (per neuron). Poisson drive is
+# required for decorrelation / reservoir / assembly analyses.
+drive_mode        = 'poisson'
+poisson_rate      = 400.0    # Hz (per neuron)
+poisson_delta_g_E = 100e-12  # S (100 pS unitary kick)
 epsilon           = 1e-3     # Constraint on dynamics
 
 tMax              = 10000    # (steps)
