@@ -23,10 +23,10 @@ conductance_A_max = 25e-9    #Siemens - AHP channel saturation
 conductance_I_max = 1.5e-9   #Siemens - unitary recurrent IPSC scale (Koos/Tepper/Wilson 2004)
 
 capacitance       = 0.5e-9   #F - capacitance of cell membrane
-_k                = 8e-1      #(V)^-1 - slope of the sigmoid (smaller is more gradual)
+_k                = 250      #(V)^-1 - slope of sigma_0 (Ponzi-Wickens 2010); transition width ~17 mV
 voltage_0         = -45e-3   #(V) -
 voltage_thresh    = -50e-3   #(V) - firing threshold
-_beta             = 8e-1      #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
+_beta             = 250      #(V)^-1 - slope of sigma (Ponzi-Wickens 2010); matched to _k for STR threshold gating
 w_A               = 0.5      # scale factor for AHP - lifted from 0.01 so adaptation reaches ~1% of leak current at saturation (Ponzi-Wickens 2010)
 I                 = 1e-3     # striatal afferents determined by cortical afferents (should make dynamic later)
 epsilon           = 1e-3     # Constraint on dynamics
