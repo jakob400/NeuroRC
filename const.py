@@ -41,8 +41,12 @@ I                 = 1e-3     # constant cortical drive (used only when drive_mod
 # poisson_delta_g_E at rate poisson_rate (per neuron). Poisson drive is
 # required for decorrelation / reservoir / assembly analyses.
 drive_mode        = 'poisson'
-poisson_rate      = 400.0    # Hz (per neuron)
-poisson_delta_g_E = 100e-12  # S (100 pS unitary kick)
+# Aggregate cortical Poisson drive per MSN: rate * delta_g_E / _a_E sets g_E
+# steady state. Calibrated to deliver V_ss near V_thresh so the network fires
+# at ~0.5-2 Hz/neuron in line with in vivo MSN rates (Mahon 2006, Sippy 2015).
+# Fine biophysical calibration (per-synapse delta_g_E, kAMPA tau) is deferred.
+poisson_rate      = 2.0e4    # Hz (aggregate)
+poisson_delta_g_E = 1.0e-9   # S (1 nS per kick, aggregate)
 epsilon           = 1e-3     # Constraint on dynamics
 
 tMax              = 10000    # (steps)

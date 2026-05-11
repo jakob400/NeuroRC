@@ -1,4 +1,4 @@
-import random
+import numpy as np
 
 import math_functions as fn
 import const
@@ -89,7 +89,11 @@ def update_state_STR(G, t):
     dt_list.append(best_dt)
     dt = dt_list[-1]
     current_time = sum(dt_list)
-    poisson_p = const.poisson_rate * dt if const.drive_mode == 'poisson' else 0.0
+
+    if const.drive_mode == 'poisson':
+        kicks = np.random.poisson(const.poisson_rate * dt, size=N)
+    else:
+        kicks = None
 
     for j in range(N):
         v_prev  = G.nodes[j]['voltage'][t]
@@ -107,8 +111,8 @@ def update_state_STR(G, t):
                 G.nodes[j]['last_spike_time'] = current_time
 
         gE_new = gE_prev + dt * func_E[j]
-        if poisson_p > 0.0 and random.random() < poisson_p:
-            gE_new += const.poisson_delta_g_E
+        if kicks is not None and kicks[j] > 0:
+            gE_new += kicks[j] * const.poisson_delta_g_E
 
         G.nodes[j]['voltage'].append(v_new)
         G.nodes[j]['conductance_E'].append(gE_new)
