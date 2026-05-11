@@ -1,14 +1,9 @@
 import random
-import networkx as nx
+import const
 
-small = 0
-large = 100
-decimals = 5
 
-def getWeight(): #returns random number between n and N, to 'decimals' decimals
-    return round(random.uniform(small,large),decimals)
-
-def weight_generator(G): #adds random weights to graph g
-    for i,j,k in G.edges(data = True):
-        G[i][j]['weight'] = 1#getWeight()
+def weight_generator(G):
+    """Assign each edge a uniform random weight in [weight_low, weight_high]."""
+    for i, j, _ in G.edges(data=True):
+        G[i][j]['weight'] = random.uniform(const.weight_low, const.weight_high)
     return G

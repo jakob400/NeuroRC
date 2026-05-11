@@ -43,6 +43,12 @@ N                 = 2#500  # number of nodes
 K                 = 1#7  # average degree
 P                 = 1e-5 # 2e-3
 
+# Synaptic weight distribution (uniform). O(1) weights yield mV-scale LIF
+# inputs (g_syn ~ 2e-3) and ~nS recurrent inhibitory drive in STR
+# (a_I * conductance_K_max * weight * sigma). Calibrated further in Phase 1.
+weight_low        = 0.0
+weight_high       = 1.0
+
 # Initial Values
 voltage_init            = -70e-3 #volts
 conductance_A_init      = 10e-9 #Siemens
