@@ -22,6 +22,19 @@ conductance_K_max = 25e-9    #Siemens - voltage-gated K saturation (drives potas
 conductance_A_max = 25e-9    #Siemens - AHP channel saturation
 conductance_I_max = 1.5e-9   #Siemens - unitary recurrent IPSC scale (Koos/Tepper/Wilson 2004)
 
+# Slow K inward rectifier (Kir2 / persistent K) for up-down state bistability.
+# Active near rest, rectifies (closes) as V depolarizes. Combined with a slow
+# activation time constant, gives the regenerative bistability that lets MSNs
+# sit in a -75 mV "down state" most of the time and intermittently transition
+# to a -55 mV "up state" where they fire 1-5 spikes. Biology: Wilson &
+# Kawaguchi 1996 (J Neurosci 16:2397); Mahon et al. 2006 (J Neurosci 26:12587);
+# Nisenbaum & Wilson 1995 (J Neurosci 15:4449). Parameters tuned empirically
+# against scripts/diag_alpha_beta_grid.py feasibility.
+conductance_KIR_max = 15e-9  #Siemens - slow K saturation
+voltage_KIR_half    = -60e-3 #(V) - half-activation; midpoint between down and up states
+_k_KIR              = 200    #(V)^-1 - slope of sigma_KIR; ~14 mV transition width
+_a_KIR              = 5.0    #(sec)^-1 - inverse time constant; tau_KIR = 200 ms
+
 capacitance       = 0.5e-9   #F - capacitance of cell membrane
 _k                = 250      #(V)^-1 - slope of sigma_0 (Ponzi-Wickens 2010); transition width ~17 mV
 voltage_0         = -45e-3   #(V) -
@@ -102,6 +115,10 @@ voltage_init            = -70e-3 #volts
 conductance_A_init      = 10e-9 #Siemens
 conductance_E_init      = 10e-9 #Siemens
 conductance_I_init      = 10e-9 #Siemens
+# Initial g_KIR. At V_init = -70 mV, sigma_KIR ~ 0.88, so the steady-state
+# initial value is conductance_KIR_max * 0.88 ~ 13 nS. Set explicitly so the
+# network starts in the down state.
+conductance_KIR_init    = 13e-9 #Siemens
 
 ### Experimental values for constants used in the LIF model
 

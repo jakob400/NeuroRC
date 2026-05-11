@@ -23,6 +23,13 @@ def sigma_0_vec(V):
     return 1.0 / (1.0 + np.exp(const._k * (const.voltage_0 - V)))
 
 
+def sigma_KIR_vec(V):
+    """Vectorized slow-K (inward rectifier) activation. High at hyperpolarized
+    V (g_KIR open, holds down state), drops as V depolarizes past
+    voltage_KIR_half (g_KIR closes, releases V to up state)."""
+    return 1.0 / (1.0 + np.exp(const._k_KIR * (V - const.voltage_KIR_half)))
+
+
 def delay_steps(state):
     """Number of steps back that span at least _tau_D of cumulative dt."""
     dt_list = state.dt_list

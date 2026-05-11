@@ -45,8 +45,9 @@ def dump_state(state, model: str, seed: int, log_dir: str = 'logs') -> str:
         f.create_dataset('dt_list', data=np.asarray(state.dt_list))
         f.create_dataset('V', data=np.asarray(state.history['V']))
         if model == 'STR':
-            for key in ('g_A', 'g_E', 'g_I'):
-                f.create_dataset(key, data=np.asarray(state.history[key]))
+            for key in ('g_A', 'g_E', 'g_I', 'g_KIR'):
+                if key in state.history:
+                    f.create_dataset(key, data=np.asarray(state.history[key]))
         if 'M' in state.history:
             f.create_dataset('M', data=np.asarray(state.history['M']))
         f.create_dataset('last_spike_time', data=state.last_spike_time)

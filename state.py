@@ -36,6 +36,7 @@ class State:
     history: Dict[str, List[np.ndarray]] = field(default_factory=dict)
     current_time: float = 0.0
     V_buffer: Optional[RingBuffer] = None
+    g_KIR: Optional[np.ndarray] = None  # slow K (Kir2); STR only, None for LIF
 
     @property
     def N(self) -> int:
@@ -74,11 +75,13 @@ def build_state(G, model: str) -> State:
         g_A = np.full(N, const.conductance_A_init, dtype=np.float64)
         g_E = np.full(N, const.conductance_E_init, dtype=np.float64)
         g_I = np.full(N, const.conductance_I_init, dtype=np.float64)
+        g_KIR = np.full(N, const.conductance_KIR_init, dtype=np.float64)
     else:
         # LIF has no conductances but we keep zero arrays so update code is uniform.
         g_A = np.zeros(N, dtype=np.float64)
         g_E = np.zeros(N, dtype=np.float64)
         g_I = np.zeros(N, dtype=np.float64)
+        g_KIR = None
 
     last_spike = np.full(N, NEVER_SPIKED, dtype=np.float64)
     A = build_adjacency(G)
@@ -92,13 +95,15 @@ def build_state(G, model: str) -> State:
     V_buffer.push(V.copy())
 
     state = State(V=V.copy(), g_A=g_A.copy(), g_E=g_E.copy(), g_I=g_I.copy(),
-                  last_spike_time=last_spike, A=A, model=model, V_buffer=V_buffer)
+                  last_spike_time=last_spike, A=A, model=model, V_buffer=V_buffer,
+                  g_KIR=(g_KIR.copy() if g_KIR is not None else None))
 
     state.history['V'] = [V.copy()]
     if model == 'STR':
         state.history['g_A'] = [g_A.copy()]
         state.history['g_E'] = [g_E.copy()]
         state.history['g_I'] = [g_I.copy()]
+        state.history['g_KIR'] = [g_KIR.copy()]
     # Per-neuron RHS magnitudes M[t,j] = max(|f_V|, |f_A|, |f_E|, |f_I|) — the
     # quantity that drives adaptive dt and, by proposal #2, an EWS observable.
     # Initial step has no RHS evaluation yet, so the first row is zero.
@@ -112,6 +117,7 @@ def record_step(state: State) -> None:
         state.history['g_A'].append(state.g_A.copy())
         state.history['g_E'].append(state.g_E.copy())
         state.history['g_I'].append(state.g_I.copy())
+        state.history['g_KIR'].append(state.g_KIR.copy())
 
 
 def stack_history(state: State, key: str) -> np.ndarray:

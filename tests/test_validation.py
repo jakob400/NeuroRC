@@ -219,24 +219,26 @@ def test_8_dt_finite_in_quiescence():
 
 def _str_rhs(t, y):
     """Single isolated STR neuron, no recurrence, constant drive.
-    y = [V, g_A, g_E, g_I].
+    y = [V, g_A, g_E, g_I, g_KIR].
     """
-    V, g_A, g_E, g_I = y
+    V, g_A, g_E, g_I, g_KIR = y
     sig = 1.0 / (1.0 + np.exp(const._beta * (const.voltage_thresh - V)))
     sig0 = 1.0 / (1.0 + np.exp(const._k * (const.voltage_0 - V)))
+    sigKIR = 1.0 / (1.0 + np.exp(const._k_KIR * (V - const.voltage_KIR_half)))
     excitatory = (const.voltage_E - V) * g_E
     inhibitory = (const.voltage_I - V) * g_I
     leakage    = (const.voltage_L - V) * const.conductance_L
-    potassium  = (const.voltage_K - V) * (const.conductance_K_max * sig0 + g_A)
+    potassium  = (const.voltage_K - V) * (const.conductance_K_max * sig0 + g_A + g_KIR)
     dV = (excitatory + inhibitory + leakage + potassium) / const.capacitance
     dgE = -const._a_E * g_E + const.I
     dgA = -const._a_A * g_A + const._a_A * const.w_A * const.conductance_A_max * sig
     dgI = -const._a_I * g_I
-    return [dV, dgA, dgE, dgI]
+    dgKIR = -const._a_KIR * g_KIR + const._a_KIR * const.conductance_KIR_max * sigKIR
+    return [dV, dgA, dgE, dgI, dgKIR]
 
 
 def test_str_single_neuron_vs_lsoda():
-    """STR Heun fixed-dt against scipy LSODA on the 4-state ODE.
+    """STR Heun fixed-dt against scipy LSODA on the 5-state ODE.
 
     Single isolated neuron (no recurrence), constant drive (no Poisson),
     spike reset disabled by raising V_thresh well above the dynamics.
@@ -246,13 +248,15 @@ def test_str_single_neuron_vs_lsoda():
     y0 = [const.voltage_init,
           const.conductance_A_init,
           const.conductance_E_init,
-          const.conductance_I_init]
+          const.conductance_I_init,
+          const.conductance_KIR_init]
     sol = solve_ivp(_str_rhs, (0, T), y0, method='LSODA',
                     rtol=1e-9, atol=1e-12, dense_output=True)
     V_ref_end = float(sol.y[0, -1])
     gA_ref_end = float(sol.y[1, -1])
     gE_ref_end = float(sol.y[2, -1])
     gI_ref_end = float(sol.y[3, -1])
+    gKIR_ref_end = float(sol.y[4, -1])
 
     with override(fixed_dt_mode=True, dt_fixed=2.5e-5, V_thresh=10.0,
                   drive_mode='constant'):
@@ -265,6 +269,7 @@ def test_str_single_neuron_vs_lsoda():
         gA_h = float(s.g_A[0])
         gE_h = float(s.g_E[0])
         gI_h = float(s.g_I[0])
+        gKIR_h = float(s.g_KIR[0])
 
     def rel(a, b):
         return abs(a - b) / max(abs(b), 1e-12)
@@ -272,6 +277,7 @@ def test_str_single_neuron_vs_lsoda():
     assert rel(gE_h, gE_ref_end) < 1e-3, (gE_h, gE_ref_end)
     assert rel(gA_h, gA_ref_end) < 1e-3, (gA_h, gA_ref_end)
     assert rel(gI_h, gI_ref_end) < 1e-3, (gI_h, gI_ref_end)
+    assert rel(gKIR_h, gKIR_ref_end) < 1e-3, (gKIR_h, gKIR_ref_end)
 
 
 def test_9_cross_integrator_agreement_lif():

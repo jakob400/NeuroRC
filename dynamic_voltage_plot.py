@@ -16,6 +16,8 @@ def voltage_plot(state, node=0):
         plt.plot(x, np.array(state.history['g_A'])[:, node], label='g_A')
         plt.plot(x, np.array(state.history['g_E'])[:, node], label='g_E')
         plt.plot(x, np.array(state.history['g_I'])[:, node], label='g_I')
+        if 'g_KIR' in state.history:
+            plt.plot(x, np.array(state.history['g_KIR'])[:, node], label='g_KIR')
 
     plt.title('epsilon = %.2e' % const.epsilon, fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)

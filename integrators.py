@@ -63,19 +63,23 @@ def step_heun_fixed_STR(G, state, t):
     dt = const.dt_fixed
     V_now = state.V
     g_A = state.g_A; g_E = state.g_E; g_I = state.g_I
+    g_KIR = state.g_KIR
 
     V_delayed = _delayed_voltage(state)
     sigma_delayed = fn.sigma_vec(V_delayed)
     sigma_now = fn.sigma_vec(V_now)
+    sigmaKIR_now = fn.sigma_KIR_vec(V_now)
     summation = state.A.dot(sigma_delayed)
 
     # Voltage: Heun RK2 using current conductances; drive recurrent term
-    # (sigma_delayed) is the same in both stages.
+    # (sigma_delayed) is the same in both stages. g_KIR (slow K) varies on a
+    # ~200 ms timescale -- effectively frozen across one 25 us step.
     def fV(V_):
         excitatory = (const.voltage_E - V_) * g_E
         inhibitory = (const.voltage_I - V_) * g_I
         leakage    = (const.voltage_L - V_) * const.conductance_L
-        potassium  = (const.voltage_K - V_) * (const.conductance_K_max * fn.sigma_0_vec(V_) + g_A)
+        potassium  = (const.voltage_K - V_) * (const.conductance_K_max * fn.sigma_0_vec(V_)
+                                               + g_A + g_KIR)
         return (excitatory + leakage + inhibitory + potassium) / const.capacitance
 
     fV1 = fV(V_now)
@@ -89,18 +93,21 @@ def step_heun_fixed_STR(G, state, t):
 
     # exp-Euler for conductances: dg/dt = -a*g + drive  =>
     # g_next = g*exp(-a*dt) + (drive/a)*(1 - exp(-a*dt))
-    a_E, a_A, a_I = const._a_E, const._a_A, const._a_I
+    a_E, a_A, a_I, a_KIR = const._a_E, const._a_A, const._a_I, const._a_KIR
     decay_E = np.exp(-a_E * dt)
     decay_A = np.exp(-a_A * dt)
     decay_I = np.exp(-a_I * dt)
+    decay_KIR = np.exp(-a_KIR * dt)
 
     drive_E = const.I if const.drive_mode == 'constant' else 0.0
     drive_A = a_A * const.w_A * const.conductance_A_max * sigma_now
     drive_I = a_I * const.conductance_I_max * summation
+    drive_KIR = a_KIR * const.conductance_KIR_max * sigmaKIR_now
 
     g_E_next = g_E * decay_E + (drive_E / a_E) * (1.0 - decay_E)
     g_A_next = g_A * decay_A + (drive_A / a_A) * (1.0 - decay_A)
     g_I_next = g_I * decay_I + (drive_I / a_I) * (1.0 - decay_I)
+    g_KIR_next = g_KIR * decay_KIR + (drive_KIR / a_KIR) * (1.0 - decay_KIR)
 
     if const.drive_mode == 'poisson':
         kicks = np.random.poisson(const.poisson_rate * dt, size=state.N)
@@ -110,15 +117,18 @@ def step_heun_fixed_STR(G, state, t):
     state.g_E = g_E_next
     state.g_I = g_I_next
     state.g_A = g_A_next
+    state.g_KIR = g_KIR_next
     state.V_buffer.push(V_next)
     state.history['V'].append(V_next.copy())
     state.history['g_A'].append(g_A_next.copy())
     state.history['g_E'].append(g_E_next.copy())
     state.history['g_I'].append(g_I_next.copy())
+    state.history['g_KIR'].append(g_KIR_next.copy())
     fE = -a_E * g_E + drive_E
     fA = -a_A * g_A + drive_A
     fI = -a_I * g_I + drive_I
-    state.history['M'].append(np.maximum.reduce([np.abs(fV1), np.abs(fA),
+    fKIR = -a_KIR * g_KIR + drive_KIR
+    state.history['M'].append(np.maximum.reduce([np.abs(fV1), np.abs(fA), np.abs(fKIR),
                                                  np.abs(fE), np.abs(fI)]))
     return state, state.current_time
 
