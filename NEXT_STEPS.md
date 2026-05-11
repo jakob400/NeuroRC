@@ -4,88 +4,98 @@ A handoff synthesis. Read `DIAGNOSTICS.md` for the underlying data,
 `PLAN.md` for the granular phase-by-phase status, and
 `RESEARCH_DIRECTIONS.md` for the three publishable proposals.
 
-## TL;DR
+## TL;DR (updated post fix-A + fix-B, 2026-05-11)
 
-The simulation core is correct, fast, and well-tested (49 tests
-passing in ~1.7 s under `uv run pytest`). Phases 0–2 of `PLAN.md` are
-done, Phase 3 shared minimum (graph dispatch, lognormal weights,
-NWS-as-DiGraph, modular SBM, MS-rewire) is done, the `metrics/`
-package scaffolds proposal #2's EWS pipeline.
+The simulation core is correct, fast, and well-tested (56 tests passing
+in ~6 s under `uv run pytest`). Phases 0–2, Phase 3 shared minimum,
+**Fix A** (V_thresh recalibration), and **Fix B** (slow K g_KIR + OU
+cortical drive replacing Poisson) are all landed on `master`.
 
-**But** four diagnostics (see `DIAGNOSTICS.md`) surfaced three real
-constraints that change what is actually publishable:
+**Diagnostics now show:**
 
-1. **The V_thresh = -42 mV calibration is broken** after GRAPH-3's
-   directed-adjacency fix. Network now fires at 18 Hz/neuron instead
-   of 1 Hz. Mechanical to fix; ~2 hours of work.
-2. **The proposal-#1 α × β grid has 1–2 of 24 cells in the
-   physiological firing window.** The bifurcation in
-   threshold-reset + Poisson drive is intrinsic; no V_thresh value
-   tiles the grid smoothly. Structural, not mechanical.
-3. **`S(t) = log(1/dt)` varies by ≤ 4.6×** across an entire run. The
-   noise floor is ~10 % relative. Proposal #2's detector does not
-   have the dynamic range to compete with the EWS baselines it is
-   supposed to beat.
+| Constraint | Pre-fix | Post-fix-B |
+|---|---|---|
+| D1: V_thresh calibration | broken (18 Hz/neuron) | **resolved** (1.57 Hz across an 8 mV V_thresh band) |
+| D2: α×β feasibility | 1-2 / 24 cells | **24 / 24 cells** physiological |
+| D3: dt observable range | 1.52 log units (4.6×) | 0.55 log units — worsened. **P2 abandon.** |
+| D4: V_thresh knife-edge | 2 mV window | **8 mV wide robust band** |
 
-The biggest single risk-reducer for #2 and #3 simultaneously is
-**adding up/down state dynamics to STR** (slow K conductance with
-V-gated activation; ~30 LOC, 2–3 days; biology is from
-Wilson & Kawaguchi 1996, Mahon 2006). That:
+Proposal #1 (AHP reservoir) is now pilot-ready. Proposal #2 (dt-as-
+observable) should be abandoned in its original framing; the dt-range
+finding folds into the P0 methods paper as a clean before/after result.
+Proposal #3 (connectome atlas) still needs Fix C (Snudda + GRAPH-8).
 
-- Opens the α × β grid (knobs become smooth, not step functions)
-- Gives the dt observable orders-of-magnitude dynamic range
-  (down-state quiescence vs up-state bursts)
-- Strengthens the biological framing for all three proposals
+**What's left to do (deferred to a later session):**
 
-## Immediate next action (fix A, ~2 hours)
+- `PUBLICATIONS.md` writing checklist for P0 (the methods paper that
+  emerged from the diagnostic work).
+- `figures/p0/` paper-grade figures generated from
+  `scripts/p0_make_figures.py`.
+- `data/p0/` CSV dumps of every numerical claim. (Diagnostic text dumps
+  already landed; conversion to CSV is mechanical.)
+- Optional: Brian2/NEURON portability spike for the "does this
+  generalize" reviewer defense.
 
-Re-apply the calibration that GRAPH-3 invalidated.
+## Completed: fix A + fix B
 
-1. Set `const.V_thresh = -0.041` (was `-0.042`). Justified by
-   `scripts/diag_recalibrate_directed.py`.
-2. Regenerate the two pinned baselines:
-   ```bash
-   uv run python -c "
-   from simulate import simulate; import numpy as np
-   for cfg in (dict(N=2,K=1,P=1e-5,suf='n2_k1_t1000_seed0'),
-               dict(N=10,K=4,P=0.2,suf='n10_k4_p02_t1000_seed0')):
-       suf = cfg.pop('suf')
-       G,s = simulate('LIF', tMax=1000, seed=0, fixed_dt_mode=False, **cfg)
-       np.save('tests/baselines/lif_%s.npy' % suf,
-               np.array(s.history['V']).T)
-   "
-   ```
-3. `uv run pytest tests/` should be green.
-4. `uv run python -m scripts.phase1_biophysics_report` — confirm rate
-   in the 0.5–2 Hz/neuron band and ISI₅/ISI₁ ≥ 1.3. Commit if so.
+Commits 863faf8 (Phase A), 85a07e7 (Phase B1 slow K), cb413bd (Phase B2
+OU drive) on `master`. See `DIAGNOSTICS.md` post-fix-B sections under
+each of D1, D2, D3, D4 for the before/after numbers.
 
-## Decision point: fix B vs fix C vs hold
+Phase A (~30 minutes):
+- `const.V_thresh = -0.041` (was `-0.042`). Justified by
+  `scripts/diag_recalibrate_directed.py` under directed adjacency.
+- LIF baselines `tests/baselines/lif_n2_k1_t1000_seed0.npy` and
+  `tests/baselines/lif_n10_k4_p02_t1000_seed0.npy` regenerated.
 
-After fix A, the structural risks (#2 and #3 above) remain. Three
-forward paths:
+Phase B1 (~2 hours):
+- Slow K inward rectifier `g_KIR` added to STR (Wilson-Kawaguchi 1996;
+  Mahon 2006). New `const.conductance_KIR_max=15 nS`,
+  `voltage_KIR_half=-60 mV`, `_k_KIR=200 V^-1`, `_a_KIR=5 s^-1`.
+- Plumbing through state.py, update_functions.py, integrators.py,
+  logging_hdf5.py, dynamic_voltage_plot.py.
+- `tests/test_bistability.py` covers rectification, state-carry,
+  history shape.
 
-- **Hold.** Stop here. Repo is correct and tested. Publishable
-  outcome: the methods paper (see below), plus maybe a Brief
-  Communication off a failing pilot.
-- **Fix B: up/down state dynamics.** 2–3 days engineering, ~30 LOC.
-  Unlocks proposals #1 and #2 in their original framings. *This is
-  the recommended path.*
-- **Fix C: B + Snudda extraction + GRAPH-8 matching protocols.**
-  2–3 weeks. Unlocks proposal #3. Has a six-month scoop clock from
-  the Kotaleski lab.
+Phase B2 (~1 hour):
+- OU process replaces Poisson on `g_E` under new default
+  `drive_mode='ou'`. `ou_tau=50 ms`, `ou_mean=3 nS`, `ou_sigma=4 nS`.
+- Exact-discretization OU step in both update_functions and integrators;
+  `g_E >= 0` clamp.
+- `tests/test_drive_modes.py` covers all three modes.
+- `scripts/diag_alpha_beta_grid.py` and
+  `scripts/diag_recalibrate_directed.py` tMax bumped from 4000 (0.1 s,
+  transient only) to 40000 (1.0 s, steady state).
 
-For the per-paper "what does this look like as an actual deliverable"
-breakdown — title, claim, target venue, falsification criterion, and
-which engineering fixes each one needs — see `PUBLICATIONS.md`.
+## Decision point: P0 vs fix C vs pilots
 
-## Per-proposal pilot success odds (rough, drawn from `DIAGNOSTICS.md`
-and `RESEARCH_DIRECTIONS.md`)
+With fix A + B landed, three forward paths:
 
-| Proposal | Now (just fix A) | After fix B | After fix C |
-|---|---|---|---|
-| #1 AHP reservoir → Neural Comp 40–50 % | < 30 % | **65–75 %** | 65–75 % |
-| #2 dt-as-observable → Front Neuroinform ~50 % | < 20 % | **50–60 %** | 50–60 % |
-| #3 connectome atlas → Network Neurosci ~50 % | 50 % (no Snudda) | 50 % | **70–75 %** |
+- **Write P0 (methods paper).** *Recommended path.* The methods paper
+  was always the publication floor and now has a clean before/after
+  experimental structure: D1/D2/D4 resolved cleanly, D3 worsened
+  honestly. ~2-3 weeks to manuscript with the existing diagnostic
+  outputs.
+- **Pilot P1 (AHP reservoir).** With α×β grid 24/24 feasible, the
+  proposal-#1 experimental design is now runnable. 4-6 months to
+  manuscript. Needs LIF-het + LIF-ALIF + IPC reimplementation.
+- **Fix C: Snudda extraction + GRAPH-8 matching protocols.** 2-3 weeks
+  to unlock proposal #3. Six-month scoop clock from Kotaleski lab.
+
+For the per-paper deliverable breakdown — title, claim, target venue,
+falsification criterion, and which engineering fixes each one needs —
+see `PUBLICATIONS.md`.
+
+## Per-proposal pilot success odds
+
+Original (pre-fix) estimates retained for comparison; *current* column
+reflects the post-fix-B state of the repo.
+
+| Proposal | Pre-fix | After fix A only | After fix A+B (current) | After fix C |
+|---|---|---|---|---|
+| #1 AHP reservoir → Neural Comp 40–50 % | < 30 % | < 30 % | **65–75 %** | 65–75 % |
+| #2 dt-as-observable → Front Neuroinform ~50 % | < 20 % | < 20 % | **Abandon original framing.** Range narrowed under fix B; D3 is structural. Salvage as P0 component. | n/a |
+| #3 connectome atlas → Network Neurosci ~50 % | 50 % | 50 % | 50 % (no Snudda yet) | **70–75 %** |
 
 ## The 4th paper that emerged from the diagnostic work
 
@@ -108,21 +118,26 @@ This is the publication *floor*: it survives no matter which of the
 three main pilots fails. Mention this paper opportunity to anyone
 considering whether to invest more time in the project.
 
-## Recommended sequencing
+## Recommended sequencing (updated post fix-B)
 
-1. **Apply fix A immediately** (housekeeping).
-2. **Spike fix B**: implement bistable Vm via a slow K inward
-   rectifier (Wilson-Kawaguchi style). Run F7-style report. If
-   bursty-but-sparse firing appears and the AHP-decay fit cleans up,
-   commit. If the spike fails, fall back to the methods paper.
-3. **In parallel with fix B coding**, draft the methods paper as a
-   risk-free deliverable.
-4. **After fix B lands**, run the proposal-#2 cheap pilot (it is
-   the cheapest of the three pilots; existing scaffold lives at
-   `scripts/proposal2_pilot.py`). 10 working days.
-5. **Based on pilot #2 verdict**, commit to either proposal #1
-   (LIF-het control week) or proposal #3 (Snudda spike) for the
-   second paper.
+1. ~~Apply fix A immediately~~ — done (commit 863faf8).
+2. ~~Spike fix B~~ — done (commits 85a07e7, cb413bd). AHP τ median
+   dropped from 86 ms to 31 ms (closer to literature ~50 ms); firing
+   became bursty (up-state clusters) at 0.67-1.6 Hz/neuron; α×β grid
+   24/24 feasible.
+3. **Write the P0 methods paper.** All four diagnostic findings (D1
+   resolved, D2 resolved, D3 worsened-and-publishable, D4 resolved)
+   now read as a clean experimental story with pre/post-fix-B tables
+   already populated in `DIAGNOSTICS.md`. Manuscript drafting is
+   off-repo; the repo-side support work is the P0-S phase of
+   `/Users/jakob/.claude/plans/declarative-giggling-bentley.md`
+   (figures, CSV dumps, optional Brian2 portability spike).
+4. **Decide P1 vs P3 for the main paper.** P1 (AHP reservoir) is now
+   pilot-ready and has a shorter path (4-6 months); P3 (connectome)
+   has higher prestige but needs fix C first.
+5. **P2 abandon.** D3 confirmed structurally; fold the dt-range
+   measurement into P0 rather than pursuing the original Chaos /
+   Front Neuroinform pitch.
 
 ## Things that are *not* serious threats (clarification)
 

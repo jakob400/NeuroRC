@@ -1,0 +1,15 @@
+=== V_thresh re-calibration under directed adjacency ===
+Default V_thresh in const.py: -41.0 mV
+
+V_thresh  rate (Hz/neuron)
+-38.0     1.565 <-- physio
+-40.0     1.565 <-- physio
+-41.0     1.565 <-- physio
+-42.0     1.565 <-- physio
+-43.0     1.565 <-- physio
+-44.0     1.565 <-- physio
+-45.0     1.570 <-- physio
+-46.0     1.585 <-- physio
+-48.0     1.930 <-- physio
+-50.0     3.215
+-55.0     13.410

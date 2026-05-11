@@ -1,0 +1,15 @@
+=== Proposal #1 alpha x beta feasibility ===
+Default conductance_A_max=2.5e-08, conductance_K_max=2.5e-08
+N=100, K=20, P=0.1, tMax=40000 steps
+
+alpha\beta     beta=0   beta=0.5     beta=1     beta=2
+0          2.03 [P]     1.51 [P]     1.53 [P]     1.53 [P]
+0.25       1.85 [P]     1.53 [P]     1.54 [P]     1.53 [P]
+0.5        1.73 [P]     1.55 [P]     1.58 [P]     1.50 [P]
+1          1.66 [P]     1.60 [P]     1.59 [P]     1.60 [P]
+2          1.80 [P]     1.80 [P]     1.75 [P]     1.70 [P]
+4          2.75 [P]     2.72 [P]     2.75 [P]     2.81 [P]
+
+Legend: S=silent (<=0.1 Hz), P=physio (0.5-5 Hz), H=hyper (>20 Hz)
+Feasibility: 24/24 cells physiological (silent=0, hyper=0, between=0).
+Elapsed: 61.7 s

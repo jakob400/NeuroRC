@@ -17,7 +17,7 @@ import const
 from simulate import simulate
 
 
-def measure(V_th, N=200, K=20, P=0.1, tMax=4000, seed=0):
+def measure(V_th, N=200, K=20, P=0.1, tMax=40000, seed=0):
     saved = const.V_thresh
     const.V_thresh = V_th
     try:

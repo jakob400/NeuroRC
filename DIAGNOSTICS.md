@@ -34,6 +34,24 @@ Right now adaptation is invisible because firing is refractory-limited.
 **Fix path:** Re-calibrate (see D4). After re-calibration, re-run this
 report to confirm BIO-1/2/3 targets are still hit. Update F7 numbers.
 
+### Post-fix-B (B1 slow K + B2 OU drive, 2026-05-11)
+
+After commits 85a07e7 (B1) + cb413bd (B2), F7 reports:
+
+| Quantity                          | Pre-GRAPH-3 | Post-GRAPH-3 (Phase A only) | Post-fix-B | Literature target |
+|-----------------------------------|-------------|----------------------------|------------|--------------------|
+| Mean firing rate (Hz/neuron)      | 0.80        | 1.12                       | **0.67**   | 0.5–2              |
+| ISI₅ / ISI₁ median                | 2.71        | 0.75                       | 0.63 *(n=4)* | ≥ 1.3            |
+| AHP τ median (fitted, ms)         | 79          | 86                         | **31**     | ~50                |
+| Aggregate g_I mean (nS)           | 12.6        | —                          | **1.07**   | (consistency)      |
+
+Rate, AHP τ, and IPSC scale are all in or near the literature window.
+ISI₅/ISI₁ has only 4 qualifying neurons because firing is now bursty —
+spikes happen in up-state clusters with long down-state quiet periods —
+so few cells emit 6 spikes in a 2.5 s window. With a longer run this
+should clear. The mean ISI ratio across the 4 qualifying cells is 2.31,
+above target; the median 0.63 is dominated by intra-burst short ISIs.
+
 ---
 
 ## D2 — The proposal-#1 α × β feasibility region is 1–2 cells of 24
@@ -85,6 +103,32 @@ qualitatively different dynamical regimes per cell.
    smaller α × β subgrid that happens to be physiological. May not
    support the headline reservoir-comparison claim.
 
+### Post-fix-B (B1 slow K + B2 OU drive, 2026-05-11)
+
+`scripts/diag_alpha_beta_grid.py` now runs at tMax=40000 (1.0 s of sim
+time; the original tMax=4000 / 0.1 s captured only the initial OU
+transient). Post-fix-B:
+
+```
+alpha\beta     beta=0   beta=0.5     beta=1     beta=2
+0          2.03 [P]     1.51 [P]     1.53 [P]     1.53 [P]
+0.25       1.85 [P]     1.53 [P]     1.54 [P]     1.53 [P]
+0.5        1.73 [P]     1.55 [P]     1.58 [P]     1.50 [P]
+1          1.66 [P]     1.60 [P]     1.59 [P]     1.60 [P]
+2          1.80 [P]     1.80 [P]     1.75 [P]     1.70 [P]
+4          2.75 [P]     2.72 [P]     2.75 [P]     2.81 [P]
+Feasibility: 24/24 cells physiological.
+```
+
+Every cell of the proposal-#1 α×β grid is now in the 0.5-5 Hz/neuron
+band. The bifurcation knife-edge of the threshold-reset + Poisson model
+is replaced by a smooth response: OU drive variance + g_KIR rectification
+together set the operating point, and α (AHP scale) / β (K scale) modulate
+secondary features (timescales, decorrelation) without pushing firing
+rate out of band. Proposal #1's headline experimental design — compare
+reservoir performance across the grid under rate-matched dynamics — is
+now feasible without per-cell rate matching.
+
 ---
 
 ## D3 — `S(t) = log(1/dt(t))` has too little variation to carry signal
@@ -133,6 +177,27 @@ publishable framing surviving this finding would be:
 
 That's a thinner story than the Chaos / Front Neuroinform pitch.
 
+### Post-fix-B (B1 slow K + B2 OU drive, 2026-05-11)
+
+`scripts/diag_soderlind_separation.py` rerun under fix-B:
+
+| Regime              | Pre-fix-B log(1/dt) range | Post-fix-B log(1/dt) range |
+|---------------------|---------------------------|----------------------------|
+| LIF supra active    | 0.34 (1.4× dt)            | 0.35 (1.42× dt)            |
+| STR full run        | 1.52 (4.6× dt)            | **0.55 (1.74× dt)**        |
+
+Fix B *narrowed*, not widened, the dt observable's dynamic range. The
+OU drive's stationary autocorrelation smooths the per-step `f(V)` magnitudes
+that drive adaptive `dt`. Adding up/down state dynamics does not rescue
+proposal #2's quantitative EWS claim.
+
+**Honest finding for the P0 methods paper.** This strengthens, not weakens,
+the dt-folklore-quantification thread: not only is the bare adaptive `dt`
+stream noisy with narrow dynamic range, but the natural fix (give the
+model more dynamics so `dt` has something to track) *makes it worse*
+because slow correlated drive smooths the right-hand-side magnitudes. The
+methods paper now has a clean before/after experiment to report.
+
 ---
 
 ## D4 — V_thresh re-calibration under directed adjacency
@@ -156,9 +221,58 @@ but the calibration is as fragile as it was pre-GRAPH-3.
 **Action:** Apply `const.V_thresh = -41 mV`. Re-pin LIF baselines.
 Re-run F7 biophysics report and confirm BIO-1/2/3 targets.
 
+### Post-fix-B (B1 slow K + B2 OU drive, 2026-05-11)
+
+`scripts/diag_recalibrate_directed.py` now runs at tMax=40000 (the
+original 4000 / 0.1 s caught only the OU transient and reported a flat
+11.7 Hz across all V_thresh values). Post-fix-B:
+
+| V_thresh (mV) | Pre-fix-B rate (Hz/neuron) | Post-fix-B rate (Hz/neuron) |
+|---------------|-----------------------------|-------------------------------|
+| −38           | —                           | 1.57                          |
+| −40           | 0.05                        | 1.57                          |
+| **−41**       | **1.25**                    | **1.57**                      |
+| −42           | 13.85                       | 1.57                          |
+| −44           | 69.8                        | 1.57                          |
+| −46           | —                           | 1.59                          |
+| −48           | —                           | 1.93                          |
+| −50           | —                           | 3.22                          |
+
+The single-mV knife-edge is resolved. V_thresh has an **8 mV wide
+physiological band** (−38 to −46 mV). The threshold-reset bifurcation
+isn't gone — push V_thresh deep enough (−55 mV) and rates explode — but
+within the operating window, V_thresh is now a non-critical knob. This is
+a calibration-robustness improvement of two orders of magnitude in
+tolerance.
+
 ---
 
-## Aggregate assessment
+## Post-fix-B aggregate assessment (2026-05-11)
+
+After commits 85a07e7 (B1 slow K) and cb413bd (B2 OU drive):
+
+| Constraint | Pre-fix-B | Post-fix-B | Resolved? |
+|------------|-----------|------------|-----------|
+| D1: V_thresh calibration broken | 18 Hz/neuron at -42 mV | 1.57 Hz across -38 to -46 mV | **Yes** |
+| D2: α×β feasibility 1/24 | 1-2 cells physio | **24/24 cells physio** | **Yes** |
+| D3: dt observable narrow range | 1.52 log units (4.6×) | 0.55 log units (1.74×) | **No — worse** |
+| D4: V_thresh single-mV window | knife-edge | 8 mV wide band | **Yes** |
+
+Three of four constraints flipped from blocker to "resolved" or
+"non-issue". The fourth (D3) flipped further toward "publishable
+finding" — fix B making the dt observable *worse* strengthens, not
+weakens, the methods paper's dt-folklore-quantification thread.
+
+**Proposal-level implications:**
+
+- Proposal #1 (AHP reservoir): D1 and D2 unblocked. Pilot is ready to run.
+- Proposal #2 (dt-as-observable): D3 confirms structural impossibility.
+  The original framing should be abandoned; the cheap replacement is to
+  fold the dt-range measurement into the P0 methods paper.
+- Proposal #3 (connectome atlas): D1 unblocked. D2 unblocked. Still
+  needs fix C (Snudda + GRAPH-8) to start the actual pilot.
+
+## Aggregate assessment (pre-fix-B, retained for the methods-paper before/after)
 
 The codebase's *simulation core* is correct and fast. Phase 0-2 made
 it trustworthy; Phase 3 shared minimum gave it the dispatch

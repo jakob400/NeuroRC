@@ -1,0 +1,33 @@
+=== Soderlind separability diagnostic ===
+
+--- Regime A: sub-threshold (no spikes possible) ---
+Confirm 0 spikes: actually 0
+Sim time: 9.9809 s; mean dt: 0.000998; max dt: 0.001
+  all dt (sub-threshold)         n=10000  median=0.001  p10=0.001  p90=0.001  mean=0.000998
+
+--- Regime B: supra-threshold (firing) ---
+Spike events: 2200
+Sim time: 0.1019 s; mean dt: 1.02e-05
+  all dt (supra-threshold)       n=10000  median=1e-05  p10=1e-05  p90=1.06e-05  mean=1.02e-05
+  dt during refractory           n= 8767  median=1e-05  p10=1e-05  p90=1e-05  mean=9.97e-06
+  dt during active dynamics      n= 1233  median=1.16e-05  p10=1.03e-05  p90=1.32e-05  mean=1.17e-05
+
+--- Decisive comparison ---
+Sub-threshold dt vs supra-threshold active-dynamics dt:
+  sub-threshold all              n=10000  median=0.001  p10=0.001  p90=0.001  mean=0.000998
+  supra active                   n= 1233  median=1.16e-05  p10=1.03e-05  p90=1.32e-05  mean=1.17e-05
+
+Absolute log(dt) variability (= raw S(t) signal range):
+  sub-threshold:   median= -6.908  std= 0.106  p5..p95=[ -6.908,  -6.908]
+  supra refractory:median=-11.513  std= 0.011  p5..p95=[-11.552, -11.513]
+  supra active:    median=-11.363  std= 0.087  p5..p95=[-11.493, -11.226]
+
+Total log(1/dt) range across the supra-threshold run: 0.350
+(Equivalent to dt varying by a factor of 1.42)
+
+--- STR check: same diagnostic on the conductance-based model ---
+STR sim time: 9.8831 s; n_steps=10000
+STR log(dt): median=-6.908 std=0.046 p5..p95=[-7.006, -6.908]
+STR total log(1/dt) range: 0.551 (dt varies by factor 1.74)
+
+Verdict: S(t) varies by less than a factor of e across the run. Z-scoring this signal would inflate pure numerical jitter into apparent structure. Proposal #2 in serious trouble.

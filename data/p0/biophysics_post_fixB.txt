@@ -1,0 +1,15 @@
+STR biophysics report (Phase 1 BIO-1/2/3 sanity)
+V_thresh = -41.0 mV, poisson_rate = 20.0 kHz, delta_g_E = 1.00 nS
+
+Simulated 2.500 s on N=200, K=20, P=0.1
+Total spikes: 337 (0.674 Hz/neuron)
+
+--- AHP decay (BIO-1, target tau ~ 50 ms)
+  131 clean fits; tau = 56.5 +- 170.9 ms (median 30.9 ms)
+
+--- ISI_5 / ISI_1 (BIO-2, target >= 1.3)
+  4 neurons qualified; ISI_5/ISI_1 = 2.31 +- 3.19 (median 0.63)
+
+--- IPSC scale (BIO-3, target 0.5-3 nS unitary)
+  g_I_max parameter = 1.50 nS
+  observed g_I:  mean = 1.07 nS, peak = 10.00 nS
