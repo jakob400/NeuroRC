@@ -5,7 +5,7 @@ import const
 
 def graph_build():
 	"""Builds a Newmann-Watts-Strogatz graph"""
-	seed_no = random.uniform(1,10000)
+	seed_no = random.randint(1, 10000)
 	G = nx.newman_watts_strogatz_graph(const.N,const.K,const.P,seed=seed_no)
 	G.name = 'Jakob\'s Model Network'
 	return G
