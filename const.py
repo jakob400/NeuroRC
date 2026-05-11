@@ -36,7 +36,6 @@ tMax              = 10000    # (steps)
 # Graph Building
 
 total_time        = 1e-3
-dt_list           = []
 lowrand           = -1e-3
 highrand          = 1e-3
 

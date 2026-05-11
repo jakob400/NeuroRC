@@ -3,7 +3,8 @@ import const
 
 def update_state_LIF(G, t):
     """ Master Update Calculation for LIF model """
-    t_delayed = fn.delay(t)
+    t_delayed = fn.delay(G, t)
+    dt_list = G.graph['dt_list']
 
     # Initializations:
     N = G.number_of_nodes()
@@ -28,17 +29,17 @@ def update_state_LIF(G, t):
 
     # Final Dynamic Protection:
     best_dt = const.epsilon / max(M) # Calculates what the dt should be
-    const.dt_list.append(best_dt) # Appends new dt to list of dt's
+    dt_list.append(best_dt) # Appends new dt to list of dt's
 
     # Main Calculations
     for j in range(N):
-        G.nodes[j]['voltage'].append(voltage_now + const.dt_list[-1] * func_v[j])        # Use [-1] or [t]. Equivalent, as both are most recent element
+        G.nodes[j]['voltage'].append(voltage_now + dt_list[-1] * func_v[j])        # Use [-1] or [t]. Equivalent, as both are most recent element
 
 
     if(G.nodes[j]['voltage'][t] > 0.05): ##### TESTING FORCED PERIODICITY
         G.nodes[j]['voltage'][t] = const.voltage_init
 
-    time_taken = sum(const.dt_list) # sums up all dt's
+    time_taken = sum(dt_list) # sums up all dt's
     return G, time_taken
 
 
@@ -51,7 +52,8 @@ def update_state_LIF(G, t):
 
 def update_state_STR(G,t):
     """ Master Update Calculation for STR model """
-    t_delayed = fn.delay(t)
+    t_delayed = fn.delay(G, t)
+    dt_list = G.graph['dt_list']
 
     # Initializations:
     N = G.number_of_nodes()
@@ -100,18 +102,18 @@ def update_state_STR(G,t):
         M[j] = max(abs(func_v[j]), abs(func_A[j]), abs(func_E[j]), abs(func_I[j])) # Calculating max func value for neuron j
     # Final Dynamic Protection:
     best_dt = const.epsilon / max(M) # Calculates what the dt should be
-    const.dt_list.append(best_dt) # Appends new dt to list of dt's
+    dt_list.append(best_dt) # Appends new dt to list of dt's
 
 
     # Main Calculations
     for j in range(N):
-        G.nodes[j]['voltage'].append(voltage_now + const.dt_list[-1] * func_v[j])        # Use [-1] or [t]. Should be equivalent.
-        G.nodes[j]['conductance_E'].append(conductance_E_now + const.dt_list[-1] * func_E[j])
-        G.nodes[j]['conductance_I'].append(conductance_I_now + const.dt_list[-1] * func_I[j])
-        G.nodes[j]['conductance_A'].append(conductance_A_now + const.dt_list[-1] * func_A[j])
+        G.nodes[j]['voltage'].append(voltage_now + dt_list[-1] * func_v[j])        # Use [-1] or [t]. Should be equivalent.
+        G.nodes[j]['conductance_E'].append(conductance_E_now + dt_list[-1] * func_E[j])
+        G.nodes[j]['conductance_I'].append(conductance_I_now + dt_list[-1] * func_I[j])
+        G.nodes[j]['conductance_A'].append(conductance_A_now + dt_list[-1] * func_A[j])
 
 
 
 
-    time_taken = sum(const.dt_list) # sums up all dt's
+    time_taken = sum(dt_list) # sums up all dt's
     return G, time_taken

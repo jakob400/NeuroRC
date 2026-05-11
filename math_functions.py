@@ -28,21 +28,22 @@ def sigma_0(voltage_now):
     result = math.pow(1 + math.exp(const._k * (const.voltage_0 - voltage_now)), -1)
     return result
 
-def delta(neighbor_voltages,t):
+def delta(G, neighbor_voltages, t):
     """ Checks if there has been a pulse _tau_D seconds ago and responds accordingly """
-    t_delayed = delay(t)
+    t_delayed = delay(G, t)
     summation = 0
     for i in range(len(neighbor_voltages)):
         summation += neighbor_voltages[t_delayed]
     return summation
 
-def delay(t):
+def delay(G, t):
     """ Calculates how many timesteps ago _tau_D is  """
+    dt_list = G.graph['dt_list']
     dt_sum = 0
     i = 0
     while( dt_sum < const._tau_D ):
-        if(len(const.dt_list) > i): # Does not proceed if list of dt's is not long enough.
-            dt_sum += const.dt_list[-i-1]
+        if(len(dt_list) > i): # Does not proceed if list of dt's is not long enough.
+            dt_sum += dt_list[-i-1]
             i += 1
         else:
             break

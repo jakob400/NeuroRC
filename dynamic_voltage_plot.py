@@ -8,14 +8,13 @@ def voltage_plot(G):
     nnumber1 = 0
     nnumber2 = 1#50 # Neurons to graph
 
-    #timesteps = const.timesteps
+    dt_list = G.graph['dt_list']
 
     x = []
     x.append(0) # first element
-    for n in range(len(const.dt_list)):
-        x.append(x[-1] + const.dt_list[n])
+    for n in range(len(dt_list)):
+        x.append(x[-1] + dt_list[n])
 
-    #x = const.dt_list#np.linspace(0, const.dt * timesteps , timesteps)
     y1 = G.nodes[nnumber1]['voltage']
     #y2 = G.nodes[nnumber2]['voltage']
     y_A = G.nodes[nnumber1]['conductance_A']
@@ -50,9 +49,8 @@ def voltage_plot(G):
     plt.clf()
 
 
-    #t = np.linspace(range(len(const.dt_list))) np.linspace
-    t = range(len(const.dt_list))
-    y = const.dt_list[:-1]
+    t = range(len(dt_list))
+    y = dt_list[:-1]
     x = x[:-1]
 
     plt.plot(t,x,linestyle = '-.',marker = ',')
