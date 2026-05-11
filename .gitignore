@@ -8,3 +8,16 @@ __pycache__/
 Animation Files/
 logs/
 .claude/
+
+# LaTeX build artifacts (keep main.tex, references.bib, .latexmkrc, main.pdf).
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
