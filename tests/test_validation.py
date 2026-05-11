@@ -217,6 +217,63 @@ def test_8_dt_finite_in_quiescence():
     assert abs(V[-200:].mean()) < 1e-2, 'V envelope did not decay to 0'
 
 
+def _str_rhs(t, y):
+    """Single isolated STR neuron, no recurrence, constant drive.
+    y = [V, g_A, g_E, g_I].
+    """
+    V, g_A, g_E, g_I = y
+    sig = 1.0 / (1.0 + np.exp(const._beta * (const.voltage_thresh - V)))
+    sig0 = 1.0 / (1.0 + np.exp(const._k * (const.voltage_0 - V)))
+    excitatory = (const.voltage_E - V) * g_E
+    inhibitory = (const.voltage_I - V) * g_I
+    leakage    = (const.voltage_L - V) * const.conductance_L
+    potassium  = (const.voltage_K - V) * (const.conductance_K_max * sig0 + g_A)
+    dV = (excitatory + inhibitory + leakage + potassium) / const.capacitance
+    dgE = -const._a_E * g_E + const.I
+    dgA = -const._a_A * g_A + const._a_A * const.w_A * const.conductance_A_max * sig
+    dgI = -const._a_I * g_I
+    return [dV, dgA, dgE, dgI]
+
+
+def test_str_single_neuron_vs_lsoda():
+    """STR Heun fixed-dt against scipy LSODA on the 4-state ODE.
+
+    Single isolated neuron (no recurrence), constant drive (no Poisson),
+    spike reset disabled by raising V_thresh well above the dynamics.
+    This is the analogue of test_1 for the STR integrator.
+    """
+    T = 50e-3
+    y0 = [const.voltage_init,
+          const.conductance_A_init,
+          const.conductance_E_init,
+          const.conductance_I_init]
+    sol = solve_ivp(_str_rhs, (0, T), y0, method='LSODA',
+                    rtol=1e-9, atol=1e-12, dense_output=True)
+    V_ref_end = float(sol.y[0, -1])
+    gA_ref_end = float(sol.y[1, -1])
+    gE_ref_end = float(sol.y[2, -1])
+    gI_ref_end = float(sol.y[3, -1])
+
+    with override(fixed_dt_mode=True, dt_fixed=2.5e-5, V_thresh=10.0,
+                  drive_mode='constant'):
+        random.seed(0); np.random.seed(0)
+        G, s = _single_neuron_state('STR')
+        n_steps = int(round(T / const.dt_fixed))
+        for t in range(n_steps):
+            integrators.step_heun_fixed_STR(G, s, t)
+        V_h = float(s.V[0])
+        gA_h = float(s.g_A[0])
+        gE_h = float(s.g_E[0])
+        gI_h = float(s.g_I[0])
+
+    def rel(a, b):
+        return abs(a - b) / max(abs(b), 1e-12)
+    assert rel(V_h, V_ref_end) < 1e-3, (V_h, V_ref_end)
+    assert rel(gE_h, gE_ref_end) < 1e-3, (gE_h, gE_ref_end)
+    assert rel(gA_h, gA_ref_end) < 1e-3, (gA_h, gA_ref_end)
+    assert rel(gI_h, gI_ref_end) < 1e-3, (gI_h, gI_ref_end)
+
+
 def test_9_cross_integrator_agreement_lif():
     """Heun fixed-dt and adaptive Euler agree on V_end for a single LIF neuron
     under matched drive (slow envelope, not bit-identical)."""
