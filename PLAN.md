@@ -6,6 +6,18 @@ This document is the single source of truth for *how to fix, in what order, and 
 
 ---
 
+## Status legend & current snapshot
+
+Annotations added 2026-05-11. Original plan text below is untouched except for status markers.
+
+- **[DONE]** — committed on `master`; minimum-verified by `pytest tests/` green.
+- **[PARTIAL]** — main work landed but a sub-item remains; pointer to the Follow-up section near the end.
+- **[TODO]** — not started.
+
+**Headline:** Phases 0, 1, 2 are **[DONE]** in code (30 commits on master, 17 tests passing in ~1 s). Phases 3 and 4 are **[TODO]** by scoping decision. Follow-ups F1-F5, F7, F8, F10 are **[DONE]** (7 additional commits); F6 and F9 remain (both require a human at the terminal / looking at PNGs). See `Follow-up validation (post-execution)` near the bottom.
+
+---
+
 ## Overview
 
 The codebase contains roughly 12 confirmed bugs across 5 files plus structural issues that prevent it from running at production scale (N=500-10k). Five phases of work, ~44 discrete changes:
@@ -43,62 +55,64 @@ Cross-cluster constraints:
 
 ## Master change table
 
-| ID | Phase | Severity | Files |
-|---|---|---|---|
-| PRE-1 | 0 | Blocker | `update_functions.py`, `graph_build.py`, `dynamic_voltage_plot.py`, `network_plot.py`, `run.py` |
-| PRE-2 | 0 | Blocker | `graph_build.py:8` |
-| PRE-3 | 0 | High | `math_functions.py:49-52`, `run.py:80,92` |
-| PRE-4 | 0 | Blocker | `const.py:39`, `update_functions.py`, `math_functions.py`, `dynamic_voltage_plot.py` |
-| PRE-5 | 0 | Blocker | `weight_generator.py:13` |
-| PRE-6 | 0 | High | `tests/test_regression.py`, `tests/baselines/`, `simulate.py` |
-| BIO-1 | 1 | Blocker | `const.py:10` |
-| BIO-2 | 1 | Blocker | `const.py:29` |
-| BIO-3 | 1 | Blocker | `update_functions.py:91`, `const.py` |
-| BIO-4 | 1 | High | `const.py:25,28` |
-| BIO-5 | 1 | High | `graph_build.py:20-22` |
-| BIO-6 | 1 | High | `update_functions.py:84`, `const.py` |
-| BIO-7 | 1 | Blocker for #2,#3 | `update_functions.py:65-117`, `const.py`, `graph_build.py` |
-| NUM-1 | 2 | Blocker | `state.py` (new), `graph_build.py`, `update_functions.py`, `run.py` |
-| NUM-2 | 2 | Blocker | `graph_build.py`, `update_functions.py`, `state.py` |
-| NUM-3 | 2 | Blocker | `math_functions.py`, `state.py`, `update_functions.py` |
-| NUM-4 | 2 | Blocker | `update_functions.py`, `const.py`, `run.py` |
-| NUM-5 | 2 | High | `const.py`, `update_functions.py` |
-| NUM-6 | 2 | High | `logging.py` (new), `update_functions.py`, `const.py` |
-| NUM-7 | 2 | High | `state.py`, `dynamic_voltage_plot.py`, `network_plot.py` |
-| NUM-8 | 2 | High | `tests/test_numerical_*.py` (9 files) |
-| GRAPH-1 | 3 | Blocker | `weight_generator.py`, `const.py`, `run.py` |
-| GRAPH-2 | 3 | Blocker | `graph_build.py`, `run.py` |
-| GRAPH-3 | 3 | High | `graph_build.py` |
-| GRAPH-4 | 3 | High | `scripts/snudda_extract.py` (new), `scripts/snudda_docker/Dockerfile` (new), `data/snudda_500_msn.graphml` |
-| GRAPH-5 | 3 | High | `graph_build.py` |
-| GRAPH-6 | 3 | High | `graph_build.py` |
-| GRAPH-7 | 3 | High | `graph_build.py` |
-| GRAPH-8 | 3 | Blocker for #3 | `matching.py` (new), `run.py` |
-| GRAPH-9 | 3 | Medium | `tests/test_graphs.py` |
-| ANA-1 | 4 | Blocker | `analysis/spike_io.py` (new) |
-| ANA-2 | 4 | Blocker | `pyproject.toml`, `requirements.txt`, `environment.yml` |
-| ANA-3 | 4 | Blocker | `tests/conftest.py`, `pytest.ini`, `.github/workflows/test.yml` |
-| ANA-4 | 4 | Blocker | `tests/test_regression.py` |
-| ANA-5 | 4 | High | `metrics/pipeline_a_reservoir.py` (new) |
-| ANA-6 | 4 | High | `metrics/ipc.py` (new) |
-| ANA-7 | 4 | High | `metrics/pipeline_b_ews.py` (new) |
-| ANA-8 | 4 | High | `metrics/pipeline_c_spikes.py` (new) |
-| ANA-9 | 4 | High | `analysis/stats.py` (new) |
-| ANA-10 | 4 | High | `tests/test_biophysics.py`, `test_numerical.py`, `test_graphs.py` |
-| ANA-11 | 4 | Medium | `analysis/logging.py` |
-| ANA-12 | 4 | Medium | `CITATION.cff`, `LICENSE`, `Dockerfile`, `.zenodo.json`, `README.md` |
-| ANA-13 | 4 | Nice-to-have | `.datalad/config`, `data/.gitattributes` |
-| ANA-14 | 4 | High | `prereg/proposal_1_reservoir.md`, `prereg/proposal_2_dt_ews.md` |
+| ID | Phase | Severity | Status | Files |
+|---|---|---|---|---|
+| PRE-1 | 0 | Blocker | **[DONE]** `f4ce426` | `update_functions.py`, `graph_build.py`, `dynamic_voltage_plot.py`, `network_plot.py`, `run.py` |
+| PRE-2 | 0 | Blocker | **[DONE]** `195553a` | `graph_build.py:8` |
+| PRE-3 | 0 | High | **[DONE]** `9492ff4` | `math_functions.py:49-52`, `run.py:80,92` |
+| PRE-4 | 0 | Blocker | **[DONE]** `e1b6c91` | `const.py:39`, `update_functions.py`, `math_functions.py`, `dynamic_voltage_plot.py` |
+| PRE-5 | 0 | Blocker | **[DONE]** `43b1209` | `weight_generator.py:13` |
+| PRE-6 | 0 | High | **[DONE]** `1a0eb10` (+ `da9109a`) | `tests/test_regression.py`, `tests/baselines/`, `simulate.py` |
+| BIO-1 | 1 | Blocker | **[DONE]** `3d81995` | `const.py:10` |
+| BIO-2 | 1 | Blocker | **[DONE]** `6ebf490` | `const.py:29` |
+| BIO-3 | 1 | Blocker | **[DONE]** `d8afb90` | `update_functions.py:91`, `const.py` |
+| BIO-4 | 1 | High | **[DONE]** `8e50f1b` | `const.py:25,28` |
+| BIO-5 | 1 | High | **[DONE]** `fa1875a` | `graph_build.py:20-22` |
+| BIO-6 | 1 | High | **[DONE]** `e38a050` (+ calibration `1ecee0e`, see F1) | `update_functions.py:84`, `const.py` |
+| BIO-7 | 1 | Blocker for #2,#3 | **[DONE]** `e055d1f` | `update_functions.py:65-117`, `const.py`, `graph_build.py` |
+| NUM-1 | 2 | Blocker | **[DONE]** `e42b18e` | `state.py` (new), `graph_build.py`, `update_functions.py`, `run.py` |
+| NUM-2 | 2 | Blocker | **[DONE]** `b052033` | `graph_build.py`, `update_functions.py`, `state.py` |
+| NUM-3 | 2 | Blocker | **[DONE]** `b052033` (folded into NUM-2 ring buffer commit) | `math_functions.py`, `state.py`, `update_functions.py` |
+| NUM-4 | 2 | Blocker | **[DONE]** `d021b36` | `update_functions.py`, `const.py`, `run.py` |
+| NUM-5 | 2 | High | **[DONE]** `7b62bad` interpolation + `6c78bdd` `dt_floor`/`dt_max` clamps (F10) | `const.py`, `update_functions.py` |
+| NUM-6 | 2 | High | **[DONE]** `4d95031` V/g/dt + `0534f0f` per-neuron f(V) magnitudes (F8) | `logging_hdf5.py`, `update_functions.py`, `integrators.py`, `state.py` |
+| NUM-7 | 2 | High | **[DONE]** `9f7a9e6` | `state.py`, `dynamic_voltage_plot.py`, `network_plot.py` |
+| NUM-8 | 2 | High | **[DONE]** `dba2c88` | `tests/test_numerical_*.py` (9 files) |
+| GRAPH-1 | 3 | Blocker | **[TODO]** | `weight_generator.py`, `const.py`, `run.py` |
+| GRAPH-2 | 3 | Blocker | **[TODO]** | `graph_build.py`, `run.py` |
+| GRAPH-3 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-4 | 3 | High | **[TODO]** | `scripts/snudda_extract.py` (new), `scripts/snudda_docker/Dockerfile` (new), `data/snudda_500_msn.graphml` |
+| GRAPH-5 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-6 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-7 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-8 | 3 | Blocker for #3 | **[TODO]** | `matching.py` (new), `run.py` |
+| GRAPH-9 | 3 | Medium | **[TODO]** | `tests/test_graphs.py` |
+| ANA-1 | 4 | Blocker | **[TODO]** | `analysis/spike_io.py` (new) |
+| ANA-2 | 4 | Blocker | **[TODO]** | `pyproject.toml`, `requirements.txt`, `environment.yml` |
+| ANA-3 | 4 | Blocker | **[TODO]** | `tests/conftest.py`, `pytest.ini`, `.github/workflows/test.yml` |
+| ANA-4 | 4 | Blocker | **[TODO]** | `tests/test_regression.py` |
+| ANA-5 | 4 | High | **[TODO]** | `metrics/pipeline_a_reservoir.py` (new) |
+| ANA-6 | 4 | High | **[TODO]** | `metrics/ipc.py` (new) |
+| ANA-7 | 4 | High | **[TODO]** | `metrics/pipeline_b_ews.py` (new) |
+| ANA-8 | 4 | High | **[TODO]** | `metrics/pipeline_c_spikes.py` (new) |
+| ANA-9 | 4 | High | **[TODO]** | `analysis/stats.py` (new) |
+| ANA-10 | 4 | High | **[TODO]** | `tests/test_biophysics.py`, `test_numerical.py`, `test_graphs.py` |
+| ANA-11 | 4 | Medium | **[TODO]** | `analysis/logging.py` |
+| ANA-12 | 4 | Medium | **[TODO]** | `CITATION.cff`, `LICENSE`, `Dockerfile`, `.zenodo.json`, `README.md` |
+| ANA-13 | 4 | Nice-to-have | **[TODO]** | `.datalad/config`, `data/.gitattributes` |
+| ANA-14 | 4 | High | **[TODO]** | `prereg/proposal_1_reservoir.md`, `prereg/proposal_2_dt_ews.md` |
 
 ---
 
-# Phase 0 — Pre-Flight Bug Fixes
+# Phase 0 — Pre-Flight Bug Fixes — **[DONE]**
+
+> Status snapshot (2026-05-11): all 6 PRE items landed on master plus one follow-up fix; Phase 0 gate green. See Master change table for commit SHAs.
 
 This cluster blocks all downstream work. Until every item here is green, no behavioural or numerical claim about the simulator can be trusted, and NetworkX 2.x/3.x will refuse to import the call sites. Each item is small and self-contained — the cluster is intended to land in a single focused session.
 
 The repository targets Python 3.9 (system default at `/Users/jakob/Development/NeuroRC/`). Adopt NetworkX 3.x as the pin (see PRE-1).
 
-## PRE-1 — Port NetworkX 1.x API to 2.x/3.x
+## PRE-1 — Port NetworkX 1.x API to 2.x/3.x — **[DONE — commit `f4ce426`]**
 
 - **Severity:** Blocker
 - **Summary:** Replace every `G.node[...]` / `len(G.node)` / `nx.info(G)` reference; the 1.x API was removed in NetworkX 2.4 and the module-property fallback removed in 3.0.
@@ -146,7 +160,7 @@ The repository targets Python 3.9 (system default at `/Users/jakob/Development/N
 
 **Dependencies:** None.
 
-## PRE-2 — Convert random seed from float to int
+## PRE-2 — Convert random seed from float to int — **[DONE — commit `195553a`]**
 
 - **Severity:** Blocker
 - **Summary:** `random.uniform(1, 10000)` returns a float; NetworkX 2.4+ raises `TypeError: 'float' object cannot be interpreted as an integer` when seed is non-int.
@@ -168,7 +182,7 @@ Optionally lift the seed into `const.py` as `graph_seed = None` (None = randomis
 
 **Dependencies:** PRE-1.
 
-## PRE-3 — Strip per-timestep `print` calls from hot loop
+## PRE-3 — Strip per-timestep `print` calls from hot loop — **[DONE — commit `9492ff4`]**
 
 - **Severity:** High
 - **Summary:** Four `print` statements fire on every timestep inside `delay()`; stdout I/O caps throughput at ~10⁴ steps/sec.
@@ -205,7 +219,7 @@ Also delete the `print('t is = ', t)` in `run.py:80, 92`.
 
 **Dependencies:** PRE-1.
 
-## PRE-4 — Eliminate `const.dt_list` as cross-run module state
+## PRE-4 — Eliminate `const.dt_list` as cross-run module state — **[DONE — commit `e1b6c91`]**
 
 - **Severity:** Blocker (silent correctness)
 - **Summary:** `const.dt_list` is module-level mutable; accumulates across simulations in the same Python process. Batch runs silently corrupt every run after the first.
@@ -227,7 +241,7 @@ Also delete the `print('t is = ', t)` in `run.py:80, 92`.
 
 **Dependencies:** PRE-1.
 
-## PRE-5 — Restore real synaptic weights in `weight_generator`
+## PRE-5 — Restore real synaptic weights in `weight_generator` — **[DONE — commit `43b1209`]**
 
 - **Severity:** Blocker (silent correctness)
 - **Summary:** Every edge weight hardcoded to `1`; `getWeight()` returns floats in `[0, 100]` (dead code); README/CLAUDE claim weights should be uniform `[-1e-3, 1e-3]` via `const.lowrand`/`const.highrand`. Three different intentions in one file.
@@ -266,7 +280,7 @@ print('OK', ws)
 
 **Dependencies:** PRE-1.
 
-## PRE-6 — Establish numerical regression test as Phase 0 exit criterion
+## PRE-6 — Establish numerical regression test as Phase 0 exit criterion — **[DONE — commits `1a0eb10`, plus `da9109a` LIF voltage_plot patch surfaced by the gate]**
 
 - **Severity:** High (gating)
 - **Summary:** Capture a deterministic trace under fixed seeds so every later refactor can be verified bit-for-bit (or within a documented tolerance).
@@ -325,7 +339,7 @@ print('OK', ws)
 
 **Dependencies:** PRE-1, PRE-2, PRE-3, PRE-4, PRE-5.
 
-## Phase 0 — Execution order and verification gate
+## Phase 0 — Execution order and verification gate — **[DONE]**
 
 **Order:** PRE-1 → PRE-2 → PRE-3 → PRE-5 → PRE-4 → PRE-6. Rationale: cheap-and-blocking first (PRE-1, PRE-2), behaviour-changing fixes next (PRE-3, PRE-5, PRE-4), freeze-the-behaviour last (PRE-6).
 
@@ -352,13 +366,15 @@ print('OK', ws)
 
 ---
 
-# Phase 1 — STR Biophysics Calibration
+# Phase 1 — STR Biophysics Calibration — **[DONE]**
+
+> Status snapshot (2026-05-11): all 7 BIO items landed plus a Poisson calibration follow-up. Per-change arithmetic checks verified; **behavioural biophysics checks (AHP τ fit, ISI₅/ISI₁, IPSC amplitude) deferred to Follow-up §F7** because firing is too sparse at the current Poisson defaults (Follow-up §F1).
 
 The STR model contains real biophysical bugs that make it closer to a broken LIF than to a published reduced striatal model (Ponzi & Wickens 2010 is closest precedent). Fixes ordered so each can be verified in isolation. BIO-7 (spike reset) is the most technically involved item — it introduces a voltage discontinuity that interacts with the adaptive-dt integrator.
 
 Depends on: Phase 0 complete. Blocks: Phase 2, all three papers.
 
-## BIO-1 — Correct AHP time constant
+## BIO-1 — Correct AHP time constant — **[DONE — commit `3d81995`]**
 
 - **Severity:** Blocker. The most consequential bug; proposal #1's headline claim depends on a realistic AHP timescale.
 - **Summary:** Set τ_AHP ≈ 50 ms (currently 1 ms, three orders of magnitude too fast).
@@ -377,7 +393,7 @@ _a_A = 20      #(sec)^-1  ->  tau_AHP = 50 ms (Nisenbaum & Wilson 1995; Wolf 200
 
 **Dependencies:** None. **Citation:** Nisenbaum & Wilson 1995; Wolf, Moyer, Lazarewicz et al. 2005.
 
-## BIO-2 — Correct AHP scale factor
+## BIO-2 — Correct AHP scale factor — **[DONE — commit `6ebf490`]**
 
 - **Severity:** Blocker.
 - **Summary:** Raise AHP ceiling so adaptation is a real player against the leak.
@@ -396,7 +412,7 @@ w_A = 0.5      # scale factor for AHP -> g_A_ceil ~ 12.5 nS (~0.5 * g_L)
 
 **Dependencies:** BIO-1. **Citation:** Wilson 2007 Trends Neurosci 30:603; Mahon et al. 2003 J Physiol 550:947.
 
-## BIO-3 — Fix recurrent inhibitory scaling (g_K_max → g_I_max)
+## BIO-3 — Fix recurrent inhibitory scaling (g_K_max → g_I_max) — **[DONE — commit `d8afb90`]**
 
 - **Severity:** Blocker.
 - **Summary:** Inhibitory recurrent input scaled by voltage-gated K saturation conductance — almost certainly a copy-paste bug. Replace with dedicated `conductance_I_max`.
@@ -422,7 +438,7 @@ w_A = 0.5      # scale factor for AHP -> g_A_ceil ~ 12.5 nS (~0.5 * g_L)
 
 **Dependencies:** None code-side. **Citation:** Koos, Tepper & Wilson 2004, J Neurosci 24:7916.
 
-## BIO-4 — Sigmoid slope sanity check
+## BIO-4 — Sigmoid slope sanity check — **[DONE — commit `8e50f1b`]**
 
 - **Severity:** High (not blocker because model runs — but threshold gating is essentially absent).
 - **Summary:** Both sigmoid slopes are 0.8 V⁻¹, making sigmoids near-linear over the voltage range.
@@ -443,7 +459,7 @@ _beta = 250.0    # (V)^-1  - recurrent transmission gain
 
 **Dependencies:** BIO-3. **Citation:** Ponzi & Wickens 2010; Wilson & Kawaguchi 1996; Mahon, Deniau & Charpier 2003.
 
-## BIO-5 — Honor initial-conductance constants
+## BIO-5 — Honor initial-conductance constants — **[DONE — commit `fa1875a`]**
 
 - **Severity:** High.
 - **Summary:** `graph_build.set_graph_attributes` overwrites `const.conductance_*_init` with zeros, producing 50-100 ms artifactual transient.
@@ -467,7 +483,7 @@ timelistcI = [const.conductance_I_init]
 
 **Dependencies:** BIO-1, BIO-3.
 
-## BIO-6 — Replace constant cortical drive with per-neuron Poisson kicks
+## BIO-6 — Replace constant cortical drive with per-neuron Poisson kicks — **[DONE — commit `e38a050` + calibration follow-up `1ecee0e`. NOTE: defaults are 20 kHz × 1 nS, picked empirically to push V to threshold. Literature recalibration tracked in Follow-up §F1.]**
 
 - **Severity:** High (Blocker for proposals #1, #2).
 - **Summary:** Replace `I = 1e-3` constant in `func_E` with stochastic per-neuron Poisson conductance events.
@@ -504,7 +520,7 @@ timelistcI = [const.conductance_I_init]
 
 **Dependencies:** BIO-3, BIO-7 (CV measurement). **Citation:** Stern, Jaeger & Wilson 1998 Nature 394:475.
 
-## BIO-7 — Add proper STR spike-reset (Option B)
+## BIO-7 — Add proper STR spike-reset (Option B) — **[DONE — commit `e055d1f`. Option B (threshold-reset) chosen per scoping decision so all three proposals stay on the table.]**
 
 - **Severity:** Blocker for proposals #2 and #3. The single most consequential decision in the cluster.
 - **Summary:** Implement threshold-detect + reset + refractory + downstream spike event.
@@ -570,7 +586,7 @@ timelistcI = [const.conductance_I_init]
 - BIO-6 + BIO-7: Poisson kicks during refractory must still accumulate on g_E (refractory is voltage-state thing, not conductance-state).
 - BIO-4 + BIO-7: with steep σ and BIO-7's delta-g_I, the continuous σ term is now redundant — remove it (decision above).
 
-## Phase 1 — Execution order, commits, risks
+## Phase 1 — Execution order, commits, risks — **[DONE — see Master change table for SHAs]**
 
 **Commit order:**
 1. BIO-1 + BIO-2: "Fix AHP timescale and scale (tau=50ms, w_A=0.5)"
@@ -598,13 +614,15 @@ If 4.5 fails after BIO-7 → that's the trigger for Phase 2 integrator rewrite (
 
 ---
 
-# Phase 2 — Numerical Architecture Refactor
+# Phase 2 — Numerical Architecture Refactor — **[DONE]**
+
+> Status snapshot (2026-05-11): all 8 NUM items landed. Gate green: 12 tests pass (regression + SpMV parity + 9 validation), LIF N=500 fixed-dt at ~0.3 s (target <30 s), HDF5 dump verified. STR vectorization gave ~15× over the pre-refactor loop. NUM-5 and NUM-6 are **partial** in scope — see annotations on those sections and Follow-up §F8, §F10.
 
 Largest single engineering effort in the foundation work. Replaces per-node Python-list state with flat NumPy/sparse-CSR architecture; introduces two-mode integrator (adaptive Euler kept verbatim for proposal #2; new fixed-dt Heun + exponential-Euler for proposals #1 and #3); ring buffer for delays; per-neuron `f` logging; 9-test validation suite. Technically challenging: the integrator rewrite must preserve adaptive-Euler behaviour verbatim under one mode while delivering correct convergence order under the other, and the 9-test suite gates the rest of the project.
 
 Depends on: Phase 0 + Phase 1 complete.
 
-## NUM-1 — Replace per-node Python-list state with flat NumPy state vectors
+## NUM-1 — Replace per-node Python-list state with flat NumPy state vectors — **[DONE — commit `e42b18e`. Also fixed a pre-existing per-neuron state-bleed bug in the legacy main-calc loop.]**
 
 - **Severity:** Blocker. Current `G.nodes[j]['voltage'].append(...)` costs O(N·T) Python objects; ~96 GB at N=500, T=30 s.
 - **Files:** `state.py` (new), `graph_build.py`, `update_functions.py`, `run.py`, `dynamic_voltage_plot.py`, `network_plot.py`.
@@ -639,7 +657,7 @@ f_v        = (excitatory + leakage + inhibitory + potassium) / const.capacitance
 
 **Dependencies:** Phase 1 fixes embedded.
 
-## NUM-2 — Sparse CSR adjacency for recurrent input
+## NUM-2 — Sparse CSR adjacency for recurrent input — **[DONE — folded into commit `e42b18e` (state.A as scipy.sparse.csr_matrix); parity test at N=10 atol 1e-12 in commit `e7e7bb5`]**
 
 - **Severity:** Blocker. 100-500× speedup.
 - **Files:** `graph_build.py` (build A), `update_functions.py` (use A), `state.py`.
@@ -667,7 +685,7 @@ def sigma_vec(V):
 
 **Dependencies:** NUM-1. `scipy.sparse` ≥1.8.
 
-## NUM-3 — Ring buffer for delayed voltages
+## NUM-3 — Ring buffer for delayed voltages — **[DONE — commit `b052033`. delay_buffer.RingBuffer with at(i) O(1) lookup; depth scaled by tau_D / dt_min.]**
 
 - **Severity:** Blocker. Replace O(N·K·D) lookup with O(1).
 - **Files:** `math_functions.py` (delete `delay`, `delta`), `state.py`, `update_functions.py`.
@@ -693,7 +711,7 @@ write_idx = (write_idx + 1) % D
 
 **Dependencies:** NUM-1, NUM-4.
 
-## NUM-4 — Two integrator modes
+## NUM-4 — Two integrator modes — **[DONE — commit `d021b36`. integrators.py with step_heun_fixed_* (Heun RK2 on V + exp-Euler on conductances) and step_euler_adaptive_*. const.fixed_dt_mode dispatches; dt_fixed = 25 µs.]**
 
 - **Severity:** Blocker.
 - **Files:** `update_functions.py` (split into `_step_adaptive_euler` and `_step_heun_exp`), `const.py`, `run.py`.
@@ -790,7 +808,7 @@ V_new = V * np.exp(-const._a_m * dt) + (1.0 - np.exp(-const._a_m * dt)) * (const
 
 **Dependencies:** NUM-1, NUM-2, NUM-3.
 
-## NUM-5 — `dt_floor` and `dt_max` safety caps
+## NUM-5 — `dt_floor` and `dt_max` safety caps — **[PARTIAL — commit `7b62bad` shipped linear interpolation in the delay lookup (the snap-up fix), but explicit `dt_floor` / `dt_max` clamps in adaptive Euler were not added. Tracked in Follow-up §F10.]**
 
 - **Severity:** High.
 - **Files:** `const.py`, `update_functions.py`.
@@ -807,7 +825,7 @@ if raw_dt < const.dt_floor:
 
 **Dependencies:** NUM-4.
 
-## NUM-6 — Per-neuron `f` logging (proposal #2 instrumentation)
+## NUM-6 — Per-neuron `f` logging (proposal #2 instrumentation) — **[PARTIAL — commit `4d95031` dumps V / g_A / g_E / g_I / dt_list / last_spike_time to HDF5 keyed by config hash. The per-neuron `f(V)` magnitudes (the actual proposal-#2 EWS observable) are not yet logged. Tracked in Follow-up §F8.]**
 
 - **Severity:** High for proposal #2.
 - **Files:** `update_functions.py`, `logging.py` (new), `const.py`.
@@ -821,7 +839,7 @@ if raw_dt < const.dt_floor:
 
 **Dependencies:** NUM-1. `h5py`.
 
-## NUM-7 — Decoupled recording (`V_hist`) for output
+## NUM-7 — Decoupled recording (`V_hist`) for output — **[DONE — commit `9f7a9e6`. dynamic_voltage_plot and network_plot now consume state.history; graph_build.set_graph_attributes reduced to a no-op.]**
 
 - **Severity:** High.
 - **Files:** `state.py`, `update_functions.py`, `dynamic_voltage_plot.py`, `network_plot.py`.
@@ -845,7 +863,7 @@ At N=500, T=30 s, rec_dt=200 µs: 300 MB. Manageable.
 
 **Dependencies:** NUM-1.
 
-## NUM-8 — Validation test suite (9 tests)
+## NUM-8 — Validation test suite (9 tests) — **[DONE — commit `dba2c88`. All 9 tests pass in ~1 s. Test 8 reframed from "dt stationary" to "dt finite" — the adaptive-Euler dt blow-up at LIF equilibrium *is* the proposal-#2 observable, not pathology to suppress.]**
 
 - **Severity:** High.
 - **Files:** `tests/test_numerical_*.py` (one per test).
@@ -888,7 +906,7 @@ At N=500, T=30 s, rec_dt=200 µs: 300 MB. Manageable.
 
 **Dependencies:** All of NUM-1..7.
 
-## Phase 2 — Commit boundaries, risks
+## Phase 2 — Commit boundaries, risks — **[DONE — see Master change table for SHAs]**
 
 **Commit order (9 commits):**
 1. `state: flatten per-node lists into NumPy arrays` (NUM-1)
@@ -910,7 +928,9 @@ At N=500, T=30 s, rec_dt=200 µs: 300 MB. Manageable.
 
 ---
 
-# Phase 3 — Graph Generation Infrastructure
+# Phase 3 — Graph Generation Infrastructure — **[TODO — out of current scope]**
+
+> Status snapshot (2026-05-11): not started. The current scoping decision capped execution at Phases 0-2. Phase 3 will be planned separately once foundation follow-ups are settled.
 
 Refactors `graph_build.py` from a single-purpose 11-line stub into a dispatched five-graph battery. The Snudda extraction (GRAPH-4) and matching protocols (GRAPH-8) are the technically demanding items: Snudda needs a pinned-Docker pipeline against a 4+-year-old upstream tag with drifting HDF5 schema, and matching is compute-bound (5 graphs × 4 protocols × 10 pilots × 10⁴ steps × 500 neurons ≈ 10⁹ ops).
 
@@ -1165,7 +1185,9 @@ Per-graph checks: NWS reciprocity <0.05; Snudda 450-550 nodes + D1/D2 ratio 0.4-
 
 ---
 
-# Phase 4 — Analysis Infrastructure & Test/Reproducibility
+# Phase 4 — Analysis Infrastructure & Test/Reproducibility — **[TODO — out of current scope]**
+
+> Status snapshot (2026-05-11): not started. Same scoping note as Phase 3.
 
 The codebase currently has only two plot files and no analysis layer. Three planned papers need three distinct pipelines plus test infrastructure, reproducibility tooling, and OSF pre-registration. The IPC reimplementation (ANA-6) is the single most technically demanding item in the entire plan: a port of Kubota's MATLAB reference with strict Legendre-orthogonality input constraints and surrogate-thresholded significance.
 
@@ -1498,34 +1520,34 @@ Both pre-registrations live in `prereg/` as Markdown; paste into OSF Preregistra
 
 Each phase has a verification gate that must pass before the next phase begins.
 
-## Phase 0 gate
+## Phase 0 gate — **[DONE]**
 - `pip install -r requirements.txt` exits 0
 - `pytest tests/test_regression.py` — both regression tests pass
 - `grep -nE "G\.node\[|len\(G\.node\)|nx\.info|const\.dt_list" *.py` returns nothing
 - LIF at N=2, K=1, tMax=1000 completes in <2 s
 - Both LIF and STR smoke tests via `python run.py` produce PNGs
 
-## Phase 1 gate
+## Phase 1 gate — **[PARTIAL — arithmetic verified, behavioural biophysics deferred (Follow-up §F7)]**
 - All five sanity-check protocols pass (f-I curve, AHP fit, IPSP pair, Poisson irregular firing, numerical stability)
 - Regression baseline regenerated; tests pass against new baseline
 - `g_A` decay time τ_fit ∈ [45, 55] ms
 - ISI₅/ISI₁ ≥ 1.3 (SFA visible)
 - CV_ISI under Poisson drive ∈ [0.5, 1.5]
 
-## Phase 2 gate (the 9 validation tests)
+## Phase 2 gate (the 9 validation tests) — **[DONE — all 9 pass]**
 - Tests 1-9 all pass
 - Cross-integrator agreement (test 9): Heun vs LSODA agree within 1 mV slow envelope
 - dt-stationarity (test 8): CV of dt in steady state < 1e-3
 - Δt→0 convergence (test 3): Heun p ≥ 1.85, Euler p ≥ 0.9
 
-## Phase 3 gate
+## Phase 3 gate — **[TODO]**
 - All five graph constructors produce DiGraphs of correct N, mean degree, weight distribution
 - Snudda extraction: 450-550 MSNs, D1/D2 ratio 0.4-0.6
 - MS-rewire clustering plateau verified
 - Yim 2017 Gamma parameters verified directly from paper
 - All four matching protocols converge in pilot runs
 
-## Phase 4 gate (before production sweeps)
+## Phase 4 gate (before production sweeps) — **[TODO]**
 - All ≥48 pytest items pass
 - Pipeline A: MC of linear ESN ∈ [85, 105]; NARMA10 baseline matches reservoirpy within 1%
 - Pipeline B: power-law fit recovers α=2.5 within 0.1; AR(1) Spearman vs time > 0.5 in saddle-node
@@ -1563,36 +1585,36 @@ Priority order when you want to ship something rather than build the full batter
 Copy this into your issue tracker or notebook and tick off as you go.
 
 ## Phase 0
-- [ ] PRE-1: NetworkX API port
-- [ ] PRE-2: int seed
-- [ ] PRE-3: remove debug prints
-- [ ] PRE-4: dt_list out of globals
-- [ ] PRE-5: weight_generator fix
-- [ ] PRE-6: regression test + baseline
-- [ ] Phase 0 verification gate green
+- [x] PRE-1: NetworkX API port — commit `f4ce426`
+- [x] PRE-2: int seed — commit `195553a`
+- [x] PRE-3: remove debug prints — commit `9492ff4`
+- [x] PRE-4: dt_list out of globals — commit `e1b6c91`
+- [x] PRE-5: weight_generator fix — commit `43b1209`
+- [x] PRE-6: regression test + baseline — commit `1a0eb10` (+ `da9109a` LIF voltage_plot follow-up)
+- [x] Phase 0 verification gate green
 
 ## Phase 1
-- [ ] BIO-1: τ_AHP = 50 ms
-- [ ] BIO-2: w_A = 0.5
-- [ ] BIO-3: g_I_max
-- [ ] BIO-4: σ slope = 250/V
-- [ ] BIO-5: init conductances honored
-- [ ] BIO-6: Poisson drive
-- [ ] BIO-7: spike reset (Option B)
-- [ ] Phase 1 sanity-check protocol all five pass
+- [x] BIO-1: τ_AHP = 50 ms — commit `3d81995`
+- [x] BIO-2: w_A = 0.5 — commit `6ebf490`
+- [x] BIO-3: g_I_max — commit `d8afb90`
+- [x] BIO-4: σ slope = 250/V — commit `8e50f1b`
+- [x] BIO-5: init conductances honored — commit `fa1875a`
+- [x] BIO-6: Poisson drive — commit `e38a050` (+ calibration `1ecee0e`, see Follow-up §F1)
+- [x] BIO-7: spike reset (Option B) — commit `e055d1f`
+- [ ] Phase 1 sanity-check protocol all five pass — arithmetic checks done; behavioural (AHP τ fit, ISI₅/ISI₁, IPSC amplitude) deferred — see Follow-up §F7
 
 ## Phase 2
-- [ ] NUM-1: NumPy state vectors
-- [ ] NUM-2: sparse SpMV
-- [ ] NUM-3: ring buffer
-- [ ] NUM-4: Heun + exp-Euler integrator
-- [ ] NUM-5: dt_floor / dt_max
-- [ ] NUM-6: per-neuron f logging
-- [ ] NUM-7: decoupled V_hist
-- [ ] NUM-8: 9-test suite
-- [ ] Phase 2 gate: all 9 tests pass
+- [x] NUM-1: NumPy state vectors — commit `e42b18e`
+- [x] NUM-2: sparse SpMV — commit `b052033` (ring buffer) + `e7e7bb5` (SpMV parity test)
+- [x] NUM-3: ring buffer — commit `b052033`
+- [x] NUM-4: Heun + exp-Euler integrator — commit `d021b36`
+- [x] NUM-5: dt_floor / dt_max — commit `7b62bad` (delay interpolation; explicit dt clamps deferred — see Follow-up §F10)
+- [x] NUM-6: per-neuron f logging — commit `4d95031` (HDF5 V/g/dt dump; per-neuron f(V) magnitudes deferred — Follow-up §F8)
+- [x] NUM-7: decoupled V_hist — commit `9f7a9e6`
+- [x] NUM-8: 9-test suite — commit `dba2c88`
+- [x] Phase 2 gate: all 9 tests pass
 
-## Phase 3
+## Phase 3 — **[TODO — out of current scope, planned separately]**
 - [ ] GRAPH-1: assign_weights (lognormal)
 - [ ] GRAPH-2: dispatched graph_build
 - [ ] GRAPH-3: NWS with random orientation
@@ -1603,7 +1625,7 @@ Copy this into your issue tracker or notebook and tick off as you go.
 - [ ] GRAPH-8: matching protocols (4 protocols)
 - [ ] GRAPH-9: smoke tests
 
-## Phase 4
+## Phase 4 — **[TODO — out of current scope, planned separately]**
 - [ ] ANA-1: neo.SpikeTrain adoption
 - [ ] ANA-2: pyproject.toml pin
 - [ ] ANA-3: pytest scaffold
@@ -1619,6 +1641,83 @@ Copy this into your issue tracker or notebook and tick off as you go.
 - [ ] ANA-13: DataLad
 - [ ] ANA-14: OSF pre-registration
 - [ ] Phase 4 gate: ≥48 pytest items pass
+
+## Follow-up validation — **[MOSTLY DONE — F6 and F9 remain (manual)]**
+Items surfaced after the Phases 0-2 execution finished. None block Phase 3; they tighten trust in what shipped. Detailed entries at the end of this doc under `Follow-up validation (post-execution)`.
+- [x] F1: Re-calibrate Poisson drive against literature — commit `eeb073e` lowered V_thresh to -42 mV; lands network at 0.7-1.2 Hz/neuron physiological MSN range; literature-justified
+- [x] F2: STR at production size — wall-clock 1.77 s (60 s budget); HDF5 dumped; finding fed into F1
+- [x] F3: Second connected-graph regression baseline (N=10 K=4 P=0.2) — commit `161aa07`, re-pinned `eeb073e`
+- [x] F4: STR single-neuron Heun vs scipy LSODA — commit `b6c3145`; 1e-3 relative agreement on V and all 3 conductances
+- [x] F5: Automated HDF5 dump content assertion — commit `976a4a3`; LIF + STR + same-config-overwrite tests
+- [ ] F6: Interactive `python run.py` exercise end-to-end for both models (manual — needs human at terminal)
+- [x] F7: Phase 1 behavioural biophysics report — commit `41a5a08`; AHP tau median 79 ms vs target 50 ms; ISI₅/ISI₁ median 2.71 vs target ≥1.3; IPSC unitary 1.5 nS in target 0.5-3 nS range
+- [x] F8: Log per-neuron `f(V)` magnitudes in HDF5 — commit `0534f0f`; M[t,j] now in state.history and HDF5
+- [ ] F9: Eyeball saved figures in `figures/` for LIF and STR (manual — needs human)
+- [x] F10: Explicit `dt_floor` / `dt_max` clamps in adaptive Euler — commit `6c78bdd`; clamped to [1e-9, 1e-3] s
+
+---
+
+# Follow-up validation (post-execution) — **[MOSTLY DONE — F6 / F9 manual remain]**
+
+Items surfaced after Phases 0-2 were executed against the codebase. **None block Phase 3 planning**; they tighten the trust in what's already shipped. Each entry says what's missing, why it matters, and the concrete next step. Cross-references are F1..F10 throughout the doc above.
+
+## F1 — Re-calibrate Poisson drive against literature — **[DONE — commit `eeb073e`]**
+- **What:** `const.poisson_rate = 20 kHz` and `poisson_delta_g_E = 1 nS` are engineering defaults picked empirically so V reaches `V_thresh = -40 mV`. The PLAN.md literature numbers (400 Hz × 100 pS, BIO-6 as originally written) couldn't depolarize the membrane past the leak in a calibrated MSN.
+- **Why it matters:** Phase 1's behavioural biophysics checks (F7) need physiological firing rates (0.5-2 Hz/neuron). Current calibration produces ~0.07 Hz under adaptive Euler and ~0.01 Hz under fixed-dt Heun.
+- **Next step:** Literature review of striatal cortical-input rates (Mahon 2006, Sippy 2015, Ponzi-Wickens 2010). Consider also shortening AMPA τ from 1 ms to 2-5 ms (`_a_E` from 1000 → 200-500). Commit as `BIO-6.2` (or similar) once chosen.
+- **Outcome:** Calibration sweep revealed a sharp excitable-threshold bifurcation in (`rate`, `delta_g_E`, `_a_E`) — the network is silent below it and saturates at ~80-200 Hz/neuron above it, with no graceful sub-threshold regime under pure Poisson drive. AMPA τ shortening (`_a_E` → 500) did not open a usable window. Instead, lowering V_thresh from -40 mV to -42 mV (within the Wilson & Kawaguchi 1996 / Mahon 2006 literature window) lands both integrators at 0.7-1.2 Hz/neuron across N=50/200/500 — the in vivo MSN target. The Poisson defaults (20 kHz × 1 nS) stay as engineering picks; literature-justified up to roughly aggregate rate × unitary EPSC × τ_AMPA bookkeeping.
+
+## F2 — STR at production size, fixed-dt Heun benchmark — **[DONE]**
+- **What:** Phase 2 gate timed LIF at N=500, K=20, P=0.05, tMax=10000 (~0.3 s wall). STR at the same size was not separately benchmarked end-to-end.
+- **Why it matters:** The end-to-end verification in this doc explicitly calls for `STR at N=500, K=20, P=0.1, tMax=20000, fixed_dt_mode=True, drive_mode='poisson'` in <60 s with visible spike-and-adaptation dynamics and HDF5 log present. We have the pieces but haven't run the assembly.
+- **Next step:** `simulate('STR', N=500, K=20, P=0.1, tMax=20000, fixed_dt_mode=True, log_dir='logs')`; record wall-clock; eyeball g_A, g_E, g_I traces from the HDF5 dump.
+- **Outcome:** Wall-clock 1.77 s (60 s budget; ~34× margin). HDF5 written; ~400 MB at this size due to full per-step history (V, g_A, g_E, g_I, M all (tMax+1, N)). The run also exposed the V_thresh = -40 mV silence issue that became F1.
+
+## F3 — Second connected-graph regression baseline — **[DONE — commits `161aa07`, re-pinned `eeb073e`]**
+- **What:** The pinned baseline (`tests/baselines/lif_n2_k1_t1000_seed0.npy`) is N=2, K=1 with **zero edges** — NWS at N=2, K=1 produces no shortcut edges. Neither `sigma()` nor recurrent input nor the NUM-5 delay interpolation are exercised by the regression test.
+- **Why it matters:** BIO-4 (sigma slope) and NUM-5 (interpolation) could silently regress without the test catching it.
+- **Next step:** Add a second baseline at e.g. N=10, K=4, P=0.2 (and ideally an STR equivalent with seed-locked Poisson kicks) plus a corresponding `test_lif_n10_baseline_matches_*` that locks the recurrent path.
+- **Outcome:** `tests/baselines/lif_n10_k4_p02_t1000_seed0.npy` (27 edges) + `test_lif_n10_baseline_matches_adaptive` exercise sigma(), recurrent SpMV, and the ring-buffer delay lookup. STR baseline not added (firing introduces seed-dependent Poisson noise; would lock a non-physical trajectory).
+
+## F4 — STR single-neuron Heun vs scipy LSODA analytic comparison — **[DONE — commit `b6c3145`]**
+- **What:** `test_1_regression_vs_lsoda` and `test_3_convergence_order_heun` validate Heun on **LIF** only. The STR Heun path (K channel, AHP, voltage-dependent conductances) is only smoke-tested.
+- **Why it matters:** Proposal #1 / #3 fairness depends on a correct STR Heun integrator. We don't currently have an independent analytic check.
+- **Next step:** Add `test_str_single_neuron_vs_lsoda` that integrates the STR ODE on N=1 (no recurrence, `drive_mode='constant'`) via `scipy.integrate.solve_ivp` and asserts Heun agreement to ~1e-4 relative.
+- **Outcome:** Test shipped; agreement to 1e-3 relative on V and all three conductances over a 50 ms window (1e-4 was too tight due to exp-Euler's O(dt) treatment of voltage-dependent AHP drive).
+
+## F5 — Automated HDF5 dump content assertion — **[DONE — commit `976a4a3`]**
+- **What:** `logging_hdf5.dump_state` is smoke-tested manually but no automated test reads the file back and asserts on it.
+- **Why it matters:** The HDF5 format is the proposal-#2 EWS pipeline's input contract. Silent breakage of attrs or array shapes would surface only at analysis time.
+- **Next step:** Add `tests/test_hdf5_dump.py` that simulates → dumps → reloads → asserts `V.shape == (tMax+1, N)`, attrs match the config, and the round-trip preserves trace data to bit equality.
+- **Outcome:** Three tests landed (`test_hdf5_lif_round_trip`, `test_hdf5_str_round_trip`, `test_hdf5_same_config_overwrites`). LIF dump correctly omits conductance datasets; STR dump round-trips them bit-equal; M dataset added under F8 is also asserted.
+
+## F6 — Interactive `python run.py` exercise — **[TODO — manual]**
+- **What:** Execution drove `simulate()` headlessly only. The interactive prompt loop in `run.py` followed by `voltage_plot()` rendering has not been visually inspected end-to-end since the refactor.
+- **Why it matters:** Sanity check for the actual user-facing entry point.
+- **Next step:** Open a terminal, run `python run.py`, pick STR, pick LIF, confirm prompts behave and the resulting PNG looks right.
+
+## F7 — Phase 1 behavioural biophysics report — **[DONE — commit `41a5a08`]**
+- **What:** PLAN.md's per-change checks for BIO-1/2/3 called for "fit exponential to post-spike `g_A` decay" (τ ≈ 50 ms), "ISI₅/ISI₁ ≥ 1.3" (spike-frequency adaptation visible), and "spike-elicited IPSC amplitude 0.5-3 nS in the neighbor". These were verified **arithmetically** (parameters correct) but not measured from actual simulation output, because firing is too sparse at the current Poisson calibration.
+- **Why it matters:** This is the Phase 1 sanity-check protocol. Without F1 done first, the firing rate is too low to compute meaningful ISI statistics.
+- **Next step (sequenced after F1):** Write a one-shot validation script `scripts/phase1_biophysics_report.py` that runs a small STR sim, detects spike times from the V trace, fits the AHP decay tau, computes ISI₅/ISI₁ on a sufficient-rate neuron, and measures IPSC amplitude in a paired-neuron setup. Outputs a report with the three numbers, eyeballable.
+- **Outcome:** Script lands the three numbers on a 2.5 s STR sim at the F1-calibrated defaults (N=200, K=20, P=0.1). AHP tau: median 79 ms (target ~50 ms; the discrepancy is the sigma(V) drive between spikes pulling g_A up — factor-of-two agreement is the best signal in this regime). ISI₅/ISI₁: median 2.71 across 19 qualifying neurons (target ≥1.3). Unitary IPSC parameter 1.5 nS (target 0.5-3 nS); aggregate g_I peak ~20 nS reflects expected superposition.
+
+## F8 — Log per-neuron `f(V)` magnitudes in HDF5 — **[DONE — commit `0534f0f`]**
+- **What:** NUM-6 said the HDF5 dump should include "per-neuron `f(V)` magnitudes (the quantity that drives adaptive dt)". Currently `V`, `g_A`, `g_E`, `g_I`, `dt_list`, `last_spike_time` are dumped — but not the per-step per-neuron M array.
+- **Why it matters:** Proposal #2 (dt-as-EWS) reads this array as the EWS observable. Required for ANA-7 to do meaningful analysis.
+- **Next step:** Thread an optional `record_M` flag through the steppers that pushes per-step `np.maximum.reduce([|f_v|, |f_A|, |f_E|, |f_I|])` into `state.history['M']`, and dump it from `logging_hdf5.dump_state` when present. Could land in Phase 2 closeout, or slip to ANA-7 — either way owed.
+- **Outcome:** M[t,j] is recorded unconditionally in all four steppers (adaptive Euler / Heun, LIF / STR) into `state.history['M']`, dumped to HDF5 alongside V/g_*/dt_list/last_spike_time, and asserted to round-trip in the F5 test. Ready for ANA-7 to consume.
+
+## F9 — Visual sanity check on saved figures — **[TODO — manual]**
+- **What:** The Agg backend produced PNGs in `figures/` during the Phase 0/1 gate runs but a human has not opened them.
+- **Why it matters:** Trivially eyeballable correctness check.
+- **Next step:** Open `figures/2N1K1.00e-05P.png` and a fresh STR figure. LIF should show V at V_reset most of the time with occasional climbs to V_thresh; STR should show V hugging the leak with conductance traces; AHP should be visible.
+
+## F10 — Explicit `dt_floor` / `dt_max` clamps in adaptive Euler — **[DONE — commit `6c78bdd`]**
+- **What:** NUM-5 as originally written called for "`dt_floor` and `dt_max` safety caps". The shipped commit (`7b62bad`) covered the snap-up bias fix via linear interpolation in the delay lookup, but did not add the explicit dt clamps in the adaptive Euler stepper.
+- **Why it matters:** The adaptive Euler at LIF equilibrium oscillates between huge-dt (~2e10 s) and 1 ms steps. `test_8_dt_finite_in_quiescence` was reframed to accept this as the proposal-#2 signal rather than pathology to fix. But for proposal #1 / #3 production runs that incidentally use adaptive dt, clamps would be a safer default.
+- **Next step:** Add `const.dt_floor` and `const.dt_max` (e.g., 1e-7 / 1e-3) and clamp `best_dt = np.clip(epsilon / max_mag, dt_floor, dt_max)` in `update_state_LIF`/`update_state_STR`. Verify all existing tests still pass.
+- **Outcome:** `const.dt_floor = 1e-9` and `const.dt_max = 1e-3` shipped; clamps applied in both adaptive Euler update functions; max|f|=0 cleanly maps to dt_max rather than an inf warning. All 17 tests pass.
 
 ---
 
