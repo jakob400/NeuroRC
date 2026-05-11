@@ -11,12 +11,13 @@ weights; State is built from it once at the start of a simulation.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 from scipy import sparse
 
 import const
+from delay_buffer import RingBuffer
 
 
 NEVER_SPIKED = -1e9
@@ -34,6 +35,7 @@ class State:
     dt_list: List[float] = field(default_factory=list)
     history: Dict[str, List[np.ndarray]] = field(default_factory=dict)
     current_time: float = 0.0
+    V_buffer: Optional[RingBuffer] = None
 
     @property
     def N(self) -> int:
@@ -71,8 +73,16 @@ def build_state(G, model: str) -> State:
     last_spike = np.full(N, NEVER_SPIKED, dtype=np.float64)
     A = build_adjacency(G)
 
+    # Ring buffer for delayed voltage lookups. Depth must cover max steps back
+    # that delay() can request: bounded by tau_D / dt_min. Use a conservative
+    # default of 1024; adaptive-dt simulations with very small epsilon may need
+    # more, but the buffer saturates gracefully.
+    depth = max(int(const._tau_D / max(const.epsilon / 1e3, 1e-7)) + 16, 128)
+    V_buffer = RingBuffer(N=N, depth=min(depth, 8192), fill=const.voltage_init)
+    V_buffer.push(V.copy())
+
     state = State(V=V.copy(), g_A=g_A.copy(), g_E=g_E.copy(), g_I=g_I.copy(),
-                  last_spike_time=last_spike, A=A, model=model)
+                  last_spike_time=last_spike, A=A, model=model, V_buffer=V_buffer)
 
     state.history['V'] = [V.copy()]
     if model == 'STR':

@@ -7,9 +7,13 @@ import const
 
 
 def _delayed_voltage(state, t):
-    """Return the per-neuron voltage from delay() steps ago as an ndarray."""
-    t_delayed = fn.delay(state, t)
-    return state.history['V'][t_delayed]
+    """Per-neuron voltage from delay_steps() steps back, via the ring buffer.
+
+    at(0) is the most-recent push (V at the start of this step); at(i) is
+    V from i steps back, matching the legacy history['V'][t-i] indexing.
+    """
+    i = fn.delay_steps(state)
+    return state.V_buffer.at(i)
 
 
 def _neighbor_sigma_sum(state, sigma_delayed):
@@ -37,6 +41,7 @@ def update_state_LIF(G, state, t):
     state.last_spike_time = np.where(spike_mask, current_time, state.last_spike_time)
 
     state.V = V_next
+    state.V_buffer.push(V_next)
     state.history['V'].append(V_next.copy())
 
     return state, current_time
@@ -97,6 +102,7 @@ def update_state_STR(G, state, t):
     state.g_E = g_E_next
     state.g_I = g_I_next
     state.g_A = g_A_next
+    state.V_buffer.push(V_next)
 
     state.history['V'].append(V_next.copy())
     state.history['g_A'].append(g_A_next.copy())

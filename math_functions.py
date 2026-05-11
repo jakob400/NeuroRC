@@ -23,15 +23,18 @@ def sigma_0_vec(V):
     return 1.0 / (1.0 + np.exp(const._k * (const.voltage_0 - V)))
 
 
-def delay(state, t):
-    """How many timesteps ago _tau_D was, by accumulating dt_list backwards."""
+def delay_steps(state):
+    """Number of steps back that span at least _tau_D of cumulative dt."""
     dt_list = state.dt_list
     dt_sum = 0.0
     i = 0
-    while dt_sum < const._tau_D:
-        if len(dt_list) > i:
-            dt_sum += dt_list[-i - 1]
-            i += 1
-        else:
-            break
-    return t - i
+    n = len(dt_list)
+    while dt_sum < const._tau_D and i < n:
+        dt_sum += dt_list[-i - 1]
+        i += 1
+    return i
+
+
+def delay(state, t):
+    """Index into a per-step history list for a delayed voltage. Returns t-i."""
+    return t - delay_steps(state)
