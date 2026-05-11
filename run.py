@@ -76,7 +76,6 @@ if (model == 'STR'):
         #if (time_taken < const.total_time):
             G, time_taken = update_functions.update_state_STR(G,t)
             t = t + 1
-            print('t is  = ',t)
             #network_plot(G,t)
         else:
             break
@@ -88,7 +87,6 @@ elif (model == 'LIF'):
         if True:
             G, time_taken = update_functions.update_state_LIF(G,t)
             t = t + 1
-            print('t is  = ',t)
         else:
             break
 

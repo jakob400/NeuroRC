@@ -14,7 +14,6 @@ def network_plot(G,t):
     plt.colorbar(nc) # node color
 
     plt.savefig('Animation Files/%d.png' %(t))
-    print('title of png is ',t,'\n')
     plt.clf()
 
 

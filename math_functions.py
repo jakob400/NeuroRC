@@ -46,10 +46,6 @@ def delay(t):
             i += 1
         else:
             break
-    print('dt_sum is',dt_sum)
-    print('_tau_D is',const._tau_D)
-    print('steps back is',i)
-    print('time_delayed is ', t-i,'\n')
     return t-i
 
 
