@@ -57,8 +57,22 @@ dynamic range that constrains its utility as an early-warning signal."
 
 **What's still needed:**
 
-- ~2 weeks of writing
-- Additional figures: dt distribution kernel-density plots, α × β heatmap
+- ~2-3 weeks of writing.
+- Manuscript drafting against the following outline:
+
+  | Section | Source material | Status |
+  |---|---|---|
+  | Intro: Söderlind/Scheffel framing | `RESEARCH_DIRECTIONS.md` §Proposal 2 citations | Outline only |
+  | Methods: model + dispatched graphs | `CLAUDE.md`, `state.py`, `graph_build.py`, `integrators.py` | All code present |
+  | Result 1: Bifurcation infeasibility regions | `figures/p0/alpha_beta_heatmap.{png,svg}`, `data/p0/alpha_beta_grid_{pre,post}.csv`, DIAGNOSTICS.md D2 | Figures and CSVs generated |
+  | Result 2: V_thresh sensitivity knife-edge | `figures/p0/v_thresh_sensitivity.{png,svg}`, `data/p0/v_thresh_sweep_{pre,post}.csv`, DIAGNOSTICS.md D4 | Figures and CSVs generated |
+  | Result 3: Bistability rescues α×β grid | `figures/p0/v_histogram.{png,svg}`, `data/p0/v_histogram_post.csv` | Figures and CSVs generated |
+  | Result 4: dt-folklore quantification | `figures/p0/dt_kde.{png,svg}`, `data/p0/dt_ranges.csv`, DIAGNOSTICS.md D3 | Figures and CSVs generated |
+  | Calibration cookbook | `scripts/phase1_biophysics_report.py`, `scripts/diag_recalibrate_directed.py` | Scripts present |
+  | Discussion: generalization | `scripts/p0_brian2_portability.py` (optional) | Not yet implemented; ~3 days extra |
+  | Reproducibility | `scripts/p0_make_figures.py` (single-entry rebuild) | Done |
+- Optional Brian2/NEURON portability spike (P0.4) for the "does this
+  generalize" reviewer defense. Skip if calendar pressure.
 
 **Falsification:** None — this is a measurement paper, not a hypothesis
 test.

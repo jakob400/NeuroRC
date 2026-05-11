@@ -37,6 +37,18 @@ G, state = simulate('STR', N=500, K=20, P=0.1, tMax=20000,
 | [`IMPLEMENTATION.md`](IMPLEMENTATION.md) | The five-agent audit that produced `PLAN.md`. |
 | [`CLAUDE.md`](CLAUDE.md) | Project architecture overview. |
 
+### Companion executables
+
+- `uv run pytest` — 56 tests, ~6 s
+- `uv run python run.py` — interactive CLI (LIF/STR prompt)
+- `uv run python -m scripts.phase1_biophysics_report` — biophysics
+  sanity (BIO-1/2/3 + AHP τ + IPSC scale targets)
+- `uv run python -m scripts.diag_*` — the four diagnostics
+- `uv run python -m scripts.p0_make_figures` — regenerates every P0
+  methods-paper figure (`figures/p0/`) and CSV (`data/p0/`) from
+  scratch; ~3-4 min wall clock.
+- `uv run python -m scripts.proposal2_pilot_smoke` — EWS pipeline smoke test
+
 ## Repository layout
 
 ```
