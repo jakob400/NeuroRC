@@ -4,6 +4,18 @@ A compiled report of three deep-dive literature reviews into specific publishabl
 
 The three candidates emerged from two prior rounds covering ten angles (reservoir computing, criticality, dopamine, plasticity, topology, information theory, adaptive-dt-as-instrument, TDA, controllability, connectome reality check). Most obvious framings are saturated; the three below survived blind-spot hunting.
 
+> **Post fix-B status (2026-05-11):**
+> A fourth deliverable (**P0 methods paper**) emerged from the diagnostic
+> work and is the *current* recommended next step. See `PUBLICATIONS.md`
+> and `NEXT_STEPS.md` for the consolidated portfolio.
+>
+> | Proposal | Status post fix-B |
+> |---|---|
+> | #1 AHP reservoir | **Pilot-ready.** α×β grid 24/24 feasible. Needs LIF-het + LIF-ALIF + IPC reimplementation. |
+> | #2 dt-as-observable | **Abandoned standalone.** STR `log(1/dt)` range narrowed from 1.52 → 0.55 log units under fix B. Material salvaged into P0. |
+> | #3 connectome atlas | Unchanged. Still needs fix C (Snudda + GRAPH-8) before pilot. |
+> | **P0** (new) | **Publishable from current repo state.** Methods paper on bifurcation infeasibility + dt folklore quantification, with pre/post fix-B before/after structure. ~2-3 weeks to manuscript. |
+
 ---
 
 ## Executive summary
@@ -39,6 +51,10 @@ Across all 10 literature-review angles, the same finding kept resurfacing: **the
 ---
 
 # Proposal 1 — AHP conductances as a tunable network-level timescale reservoir
+
+> **Status post fix-B (2026-05-11):** Pilot-ready. α×β grid 24/24 feasible
+> after slow K + OU drive landed. See `DIAGNOSTICS.md` D2 post-fix-B
+> section. Still needs LIF-het, LIF-ALIF, rate-matching, and IPC reimpl.
 
 ## One-sentence claim
 
@@ -155,6 +171,14 @@ Primary confirmatory test: STR(α=1, β=1) vs best-tuned LIF-het across MC, NARM
 ---
 
 # Proposal 2 — dt(t) as a real-time dynamical observable
+
+> **Status post fix-B (2026-05-11): ABANDONED as standalone.** Fix B
+> *narrowed* STR `log(1/dt)` range from 1.52 to 0.55 log units (factor
+> 4.6× → 1.74×) — OU drive's slow correlated noise smooths the per-step
+> `f(V)` magnitudes that drive adaptive dt. See `DIAGNOSTICS.md` D3
+> post-fix-B section. The dt-range measurement (pre vs post) is being
+> folded into P0's methods paper as a clean before/after result. The
+> sections below are retained for historical context only.
 
 ## One-sentence claim
 
@@ -291,6 +315,12 @@ If S fails this cheap test, abandon. ~3 days compute + ~3 days analysis. Code ch
 ---
 
 # Proposal 3 — Necessary structural features for striatal dynamics: a null-model atlas
+
+> **Status post fix-B (2026-05-11):** Unchanged. Pilot still blocked on
+> fix C (Snudda extraction + GRAPH-8 matching protocols, ~2-3 weeks
+> engineering, six-month scoop clock from the Kotaleski lab). D1/D2
+> resolution under fix B does make the eventual pilot cheaper, but the
+> Snudda dependency is the gating item.
 
 ## One-sentence claim
 

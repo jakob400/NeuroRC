@@ -14,7 +14,31 @@ Annotations added 2026-05-11. Original plan text below is untouched except for s
 - **[PARTIAL]** — main work landed but a sub-item remains; pointer to the Follow-up section near the end.
 - **[TODO]** — not started.
 
-**Headline:** Phases 0, 1, 2 are **[DONE]** in code (33 commits on master, 17 tests). All ten Phase-0-to-2 follow-ups F1-F10 are **[DONE]**. Phase 3 shared minimum **[DONE]** — GRAPH-1 lognormal weights (`c04ed2e`), GRAPH-2 dispatched constructor (`08c1c25`), GRAPH-3 NWS-as-DiGraph (`a4c41de`), GRAPH-7 modular SBM landed along with GRAPH-2. Remaining Phase 3: GRAPH-4 (Snudda, needs Docker), GRAPH-5 (MS rewire, pure code), GRAPH-6 (Gamma kernel, needs Yim 2017 verification), GRAPH-8 (matching protocols), GRAPH-9 (smoke tests). 34 tests passing. Environment is uv-managed via pyproject.toml.
+**Headline (post fix-B, 2026-05-11):** Phases 0, 1, 2 are **[DONE]**.
+Phase 3 shared minimum **[DONE]** — GRAPH-1 lognormal weights
+(`c04ed2e`), GRAPH-2 dispatched constructor (`08c1c25`), GRAPH-3
+NWS-as-DiGraph (`a4c41de`), GRAPH-5 MS-rewire, GRAPH-7 modular SBM.
+Remaining Phase 3: GRAPH-4 (Snudda, needs Docker), GRAPH-6 (Gamma
+kernel, needs Yim 2017 verification), GRAPH-8 (matching protocols),
+GRAPH-9 (smoke tests). All ten Phase 0-2 follow-ups F1-F10 are
+**[DONE]**.
+
+**Post-Phase-3 fixes (new since 2026-05-11):**
+- **Fix A** (V_thresh recalibration, commit `863faf8`) — restored 1 Hz
+  firing rate after GRAPH-3's directed-adjacency change.
+- **Fix B** (slow K g_KIR + OU drive replacing Poisson, commits
+  `85a07e7`, `cb413bd`) — added bistability mechanism. **D1/D2/D4
+  resolved**, D3 worsened-but-publishable. See `DIAGNOSTICS.md`
+  post-fix-B sections.
+- **Phase B3** (revalidation, commit `4a5a716`) — captured all
+  before/after diagnostic outputs in `data/p0/`.
+- **Phase P0-S** (methods-paper artifacts, commit `a30b151`) —
+  `scripts/p0_make_figures.py`, `figures/p0/`, `data/p0/*.csv`.
+
+56 tests passing in ~6 s under `uv run pytest`. Environment is
+uv-managed via `pyproject.toml`. The methods paper P0 is the immediate
+next deliverable (manuscript drafting off-repo); see `PUBLICATIONS.md`
+and `NEXT_STEPS.md`.
 
 ---
 
