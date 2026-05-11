@@ -14,7 +14,7 @@ Annotations added 2026-05-11. Original plan text below is untouched except for s
 - **[PARTIAL]** — main work landed but a sub-item remains; pointer to the Follow-up section near the end.
 - **[TODO]** — not started.
 
-**Headline:** Phases 0, 1, 2 are **[DONE]** in code (33 commits on master, 17 tests passing in ~1 s). Phases 3 and 4 are **[TODO]** by scoping decision. All ten follow-ups F1-F10 are **[DONE]**. Environment migrated from venv + requirements.txt to uv + pyproject.toml (commit `f220446`). See `Follow-up validation (post-execution)` near the bottom.
+**Headline:** Phases 0, 1, 2 are **[DONE]** in code (33 commits on master, 17 tests). All ten Phase-0-to-2 follow-ups F1-F10 are **[DONE]**. Phase 3 shared minimum **[DONE]** — GRAPH-1 lognormal weights (`c04ed2e`), GRAPH-2 dispatched constructor (`08c1c25`), GRAPH-3 NWS-as-DiGraph (`a4c41de`), GRAPH-7 modular SBM landed along with GRAPH-2. Remaining Phase 3: GRAPH-4 (Snudda, needs Docker), GRAPH-5 (MS rewire, pure code), GRAPH-6 (Gamma kernel, needs Yim 2017 verification), GRAPH-8 (matching protocols), GRAPH-9 (smoke tests). 34 tests passing. Environment is uv-managed via pyproject.toml.
 
 ---
 
@@ -78,13 +78,13 @@ Cross-cluster constraints:
 | NUM-6 | 2 | High | **[DONE]** `4d95031` V/g/dt + `0534f0f` per-neuron f(V) magnitudes (F8) | `logging_hdf5.py`, `update_functions.py`, `integrators.py`, `state.py` |
 | NUM-7 | 2 | High | **[DONE]** `9f7a9e6` | `state.py`, `dynamic_voltage_plot.py`, `network_plot.py` |
 | NUM-8 | 2 | High | **[DONE]** `dba2c88` | `tests/test_numerical_*.py` (9 files) |
-| GRAPH-1 | 3 | Blocker | **[TODO]** | `weight_generator.py`, `const.py`, `run.py` |
-| GRAPH-2 | 3 | Blocker | **[TODO]** | `graph_build.py`, `run.py` |
-| GRAPH-3 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-1 | 3 | Blocker | **[DONE]** `c04ed2e` | `weight_generator.py`, `const.py`, `tests/test_weights.py` |
+| GRAPH-2 | 3 | Blocker | **[DONE]** `08c1c25` | `graph_build.py`, `tests/test_graph_build.py` |
+| GRAPH-3 | 3 | High | **[DONE]** `a4c41de` | `graph_build.py`, `state.py`, `tests/test_graph_build.py` |
 | GRAPH-4 | 3 | High | **[TODO]** | `scripts/snudda_extract.py` (new), `scripts/snudda_docker/Dockerfile` (new), `data/snudda_500_msn.graphml` |
 | GRAPH-5 | 3 | High | **[TODO]** | `graph_build.py` |
-| GRAPH-6 | 3 | High | **[TODO]** | `graph_build.py` |
-| GRAPH-7 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-6 | 3 | High | **[TODO — blocked on Yim 2017 verification]** | `graph_build.py` |
+| GRAPH-7 | 3 | High | **[DONE]** `08c1c25` — modular SBM with Burke 2017 asymmetry landed alongside GRAPH-2 dispatch | `graph_build.py` |
 | GRAPH-8 | 3 | Blocker for #3 | **[TODO]** | `matching.py` (new), `run.py` |
 | GRAPH-9 | 3 | Medium | **[TODO]** | `tests/test_graphs.py` |
 | ANA-1 | 4 | Blocker | **[TODO]** | `analysis/spike_io.py` (new) |
