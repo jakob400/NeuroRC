@@ -78,9 +78,37 @@ def test_unknown_graph_type_rejected():
         graph_build('mystery', n_nodes=10)
 
 
-def test_ms_rewire_not_yet_implemented():
-    with pytest.raises(NotImplementedError):
+def test_ms_rewire_requires_source_graph():
+    with pytest.raises(ValueError, match='source_graph'):
         graph_build('ms_rewire', n_nodes=20)
+
+
+def test_ms_rewire_preserves_degree_sequence():
+    """GRAPH-5: in/out degree sequences must be identical pre/post rewire."""
+    src = graph_build('nws', n_nodes=80, seed=1, k=6, p=0.05)
+    in_pre = sorted(d for _, d in src.in_degree())
+    out_pre = sorted(d for _, d in src.out_degree())
+    rew = graph_build('ms_rewire', n_nodes=80, seed=2,
+                      source_graph=src, n_swaps_multiplier=20)
+    in_post = sorted(d for _, d in rew.in_degree())
+    out_post = sorted(d for _, d in rew.out_degree())
+    assert in_pre == in_post
+    assert out_pre == out_post
+    assert isinstance(rew, nx.DiGraph)
+    # Transitivity log was recorded.
+    assert 'rewire_transitivity_log' in rew.graph
+    assert len(rew.graph['rewire_transitivity_log']) > 1
+
+
+def test_ms_rewire_changes_edge_set():
+    """Rewire should change at least some edges (mixing test)."""
+    src = graph_build('nws', n_nodes=80, seed=3, k=6, p=0.05)
+    rew = graph_build('ms_rewire', n_nodes=80, seed=4,
+                      source_graph=src, n_swaps_multiplier=50)
+    same = set(src.edges()) & set(rew.edges())
+    assert len(same) < src.number_of_edges(), (
+        'rewire failed to mix; %d / %d edges unchanged'
+        % (len(same), src.number_of_edges()))
 
 
 def test_gamma_kernel_blocked_without_verification():
