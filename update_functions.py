@@ -90,7 +90,7 @@ def update_state_STR(G,t):
             if(k != j): # Redundant unless MultiGraph
                 neighbor_voltage = G.nodes[k]['voltage'][t_delayed]
                 summation = summation + G[j][k]['weight'] * fn.sigma (neighbor_voltage)
-        func_I[j] = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_K_max * summation)
+        func_I[j] = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_I_max * summation)
 
     # Randomness Generator
         func_v[j] = func_v[j] #+ fn.get_Rand()

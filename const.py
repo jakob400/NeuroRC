@@ -18,8 +18,9 @@ voltage_K = -90e-3   #(V) - potassium
 
 # Assorted
 conductance_L     = 28e-9    #Siemens - leakage conductance
-conductance_K_max = 25e-9    #Siemens - range (0<x<50) change later? Saturation value for K channel
-conductance_A_max = 25e-9    #Siemens - Not sure what this should be. Saturation value for AHP channel
+conductance_K_max = 25e-9    #Siemens - voltage-gated K saturation (drives potassium term via sigma_0)
+conductance_A_max = 25e-9    #Siemens - AHP channel saturation
+conductance_I_max = 1.5e-9   #Siemens - unitary recurrent IPSC scale (Koos/Tepper/Wilson 2004)
 
 capacitance       = 0.5e-9   #F - capacitance of cell membrane
 _k                = 8e-1      #(V)^-1 - slope of the sigmoid (smaller is more gradual)
