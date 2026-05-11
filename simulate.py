@@ -13,10 +13,11 @@ import graph_build
 import weight_generator
 import integrators
 import state as state_mod
+import logging_hdf5
 
 
 def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0,
-             fixed_dt_mode=None, dt_fixed=None):
+             fixed_dt_mode=None, dt_fixed=None, log_dir=None):
     if model not in ('STR', 'LIF'):
         raise ValueError("model must be 'STR' or 'LIF', got %r" % (model,))
 
@@ -43,6 +44,8 @@ def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0,
         t_max = const.tMax
         for t in range(t_max):
             step(G, state, t)
+        if log_dir is not None:
+            logging_hdf5.dump_state(state, model, seed, log_dir=log_dir)
         return G, state
     finally:
         for key, value in saved.items():
