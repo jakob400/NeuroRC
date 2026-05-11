@@ -82,7 +82,7 @@ Cross-cluster constraints:
 | GRAPH-2 | 3 | Blocker | **[DONE]** `08c1c25` | `graph_build.py`, `tests/test_graph_build.py` |
 | GRAPH-3 | 3 | High | **[DONE]** `a4c41de` | `graph_build.py`, `state.py`, `tests/test_graph_build.py` |
 | GRAPH-4 | 3 | High | **[TODO]** | `scripts/snudda_extract.py` (new), `scripts/snudda_docker/Dockerfile` (new), `data/snudda_500_msn.graphml` |
-| GRAPH-5 | 3 | High | **[TODO]** | `graph_build.py` |
+| GRAPH-5 | 3 | High | **[DONE]** `a8bfc66` | `graph_build.py`, `tests/test_graph_build.py` |
 | GRAPH-6 | 3 | High | **[TODO — blocked on Yim 2017 verification]** | `graph_build.py` |
 | GRAPH-7 | 3 | High | **[DONE]** `08c1c25` — modular SBM with Burke 2017 asymmetry landed alongside GRAPH-2 dispatch | `graph_build.py` |
 | GRAPH-8 | 3 | Blocker for #3 | **[TODO]** | `matching.py` (new), `run.py` |
