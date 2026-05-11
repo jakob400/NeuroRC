@@ -16,11 +16,11 @@ def voltage_plot(G):
         x.append(x[-1] + const.dt_list[n])
 
     #x = const.dt_list#np.linspace(0, const.dt * timesteps , timesteps)
-    y1 = G.node[nnumber1]['voltage']
-    #y2 = G.node[nnumber2]['voltage']
-    y_A = G.node[nnumber1]['conductance_A']
-    y_E = G.node[nnumber1]['conductance_E']
-    y_I = G.node[nnumber1]['conductance_I']
+    y1 = G.nodes[nnumber1]['voltage']
+    #y2 = G.nodes[nnumber2]['voltage']
+    y_A = G.nodes[nnumber1]['conductance_A']
+    y_E = G.nodes[nnumber1]['conductance_E']
+    y_I = G.nodes[nnumber1]['conductance_I']
 
     xmin = min(x)
     xmax = max(x)

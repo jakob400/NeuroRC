@@ -5,7 +5,7 @@ from itertools import count
 def network_plot(G,t):
     #voltages = list(nx.get_node_attributes(G,'voltage').values())
     nodes = G.nodes
-    voltages = [G.node[j]['voltage'][t] for j in nodes]
+    voltages = [G.nodes[j]['voltage'][t] for j in nodes]
 
     pos = nx.shell_layout(G)
 

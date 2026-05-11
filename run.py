@@ -59,7 +59,6 @@ while True:
 
 G = gbuild.set_graph_attributes(G,model) # sets node attributes
 G = weight_generator(G) # sets edge weights randomly
-#timesteps = const.timesteps #len(G.node[1]['voltage'])
 
 
 
@@ -97,7 +96,7 @@ elif (model == 'LIF'):
 print('Time calculated over = ', time_taken)
 print('Time steps taken     = ', len(G.nodes[1]['voltage']),'\n')
 
-print(nx.info(G),'\n')
+print('Graph: %s, nodes=%d, edges=%d\n' % (G.name, G.number_of_nodes(), G.number_of_edges()))
 
 voltage_plot(G)
 
