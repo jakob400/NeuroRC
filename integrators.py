@@ -23,8 +23,8 @@ step_euler_adaptive_STR = update_functions.update_state_STR
 
 
 def _delayed_voltage(state):
-    i = fn.delay_steps(state)
-    return state.V_buffer.at(i)
+    from delay_buffer import interpolated_lookup
+    return interpolated_lookup(state.V_buffer, state.dt_list, const._tau_D)
 
 
 def _spike_reset(state, V_candidate, current_time):

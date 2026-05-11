@@ -40,3 +40,23 @@ class RingBuffer:
             steps_back = bound
         idx = (self._next - 1 - steps_back) % self._depth
         return self._buf[idx]
+
+
+def interpolated_lookup(buf: 'RingBuffer', dt_list, tau_D):
+    """Linear interpolation at lag tau_D into the past.
+
+    buf.at(0) is the most recent push. dt_list[-1] is the dt of the most
+    recent step. Walk back accumulating dt until the running sum brackets
+    tau_D, then linearly interpolate between buf.at(i) and buf.at(i+1).
+    """
+    dt_sum = 0.0
+    n = len(dt_list)
+    for i in range(n):
+        step = dt_list[-i - 1]
+        new_sum = dt_sum + step
+        if new_sum >= tau_D:
+            alpha = (tau_D - dt_sum) / step if step > 0 else 0.0
+            return (1.0 - alpha) * buf.at(i) + alpha * buf.at(i + 1)
+        dt_sum = new_sum
+    # History too short; return oldest available
+    return buf.at(min(buf.filled - 1, buf.depth - 1))

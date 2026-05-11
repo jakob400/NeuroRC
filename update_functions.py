@@ -7,13 +7,9 @@ import const
 
 
 def _delayed_voltage(state, t):
-    """Per-neuron voltage from delay_steps() steps back, via the ring buffer.
-
-    at(0) is the most-recent push (V at the start of this step); at(i) is
-    V from i steps back, matching the legacy history['V'][t-i] indexing.
-    """
-    i = fn.delay_steps(state)
-    return state.V_buffer.at(i)
+    """Per-neuron voltage at lag tau_D, via the ring buffer with linear interp."""
+    from delay_buffer import interpolated_lookup
+    return interpolated_lookup(state.V_buffer, state.dt_list, const._tau_D)
 
 
 def _neighbor_sigma_sum(state, sigma_delayed):
