@@ -43,15 +43,25 @@ class State:
 
 
 def build_adjacency(G) -> sparse.csr_matrix:
-    """Weighted adjacency. Excludes self-loops; consistent with k != j neighbor logic."""
+    """Weighted adjacency. ``A[postsyn, presyn] = w`` so that the recurrent
+    input to neuron ``j`` is ``(A @ sigma_delayed)[j] = sum_k A[j,k] * sigma_k``,
+    summed over presynaptic ``k``.
+
+    Excludes self-loops. For undirected graphs the second add keeps A
+    symmetric (matches Phase 0-2 behaviour). For directed graphs only
+    the (postsyn, presyn) entry is set, so reciprocity-free DiGraphs
+    yield a one-sided adjacency.
+    """
     N = G.number_of_nodes()
     rows, cols, data = [], [], []
+    is_directed = G.is_directed()
     for u, v, d in G.edges(data=True):
         if u == v:
             continue
         w = d.get('weight', 1.0)
-        rows.append(u); cols.append(v); data.append(w)
-        rows.append(v); cols.append(u); data.append(w)  # undirected
+        rows.append(v); cols.append(u); data.append(w)
+        if not is_directed:
+            rows.append(u); cols.append(v); data.append(w)
     return sparse.csr_matrix((data, (rows, cols)), shape=(N, N))
 
 

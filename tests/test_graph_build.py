@@ -14,6 +14,30 @@ def test_nws_default():
     assert G.graph['seed'] == 1
 
 
+def test_nws_returns_digraph_with_low_reciprocity():
+    """GRAPH-3: NWS is oriented; reciprocity should sit well below
+    the empirical MSN-MSN ~5-10% range (Tunstall 2002).
+
+    NetworkX's NWS implementation adds one shortcut per ring edge with
+    probability p, so the undirected-analogue mean degree is
+    approximately ``k * (1 + p)`` — not the ER-style ``k + 2*p*(N-k-1)``
+    formula sometimes quoted in the literature.
+    """
+    n, k, p = 200, 8, 0.05
+    G = graph_build('nws', n_nodes=n, seed=5, k=k, p=p)
+    assert isinstance(G, nx.DiGraph)
+    assert nx.reciprocity(G) < 0.05
+
+    # Each undirected NWS edge becomes one directed edge after random
+    # orientation, so the count is conserved.
+    expected_undirected_edges = (n * k // 2)  # ring contribution lower bound
+    assert G.number_of_edges() >= expected_undirected_edges
+    expected_mean_deg = k * (1 + p)
+    measured = 2 * G.number_of_edges() / n   # in + out average
+    rel = abs(measured - expected_mean_deg) / expected_mean_deg
+    assert rel < 0.10, (measured, expected_mean_deg)
+
+
 def test_nws_back_compat_no_args():
     """Calling without graph_type defaults to NWS using const.N/K/P."""
     G = graph_build()

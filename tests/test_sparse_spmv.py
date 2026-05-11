@@ -31,14 +31,18 @@ def test_spmv_matches_python_loop_N10():
     # SpMV
     summ_sparse = state.A.dot(sigma_v)
 
-    # Reference: explicit per-neuron loop over neighbors with k != j
+    # Reference: explicit per-neuron loop summing presynaptic input.
+    # For a DiGraph that is k in predecessors(j); for an undirected
+    # Graph the two notions coincide.
     summ_loop = np.zeros(state.N)
+    is_directed = G.is_directed()
     for j in range(state.N):
         s = 0.0
-        for k in G.neighbors(j):
+        sources = G.predecessors(j) if is_directed else G.neighbors(j)
+        for k in sources:
             if k == j:
                 continue
-            s += G[j][k]['weight'] * sigma_v[k]
+            s += G[k][j]['weight'] * sigma_v[k]
         summ_loop[j] = s
 
     assert np.allclose(summ_sparse, summ_loop, atol=1e-12, rtol=0), (

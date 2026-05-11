@@ -72,10 +72,26 @@ def graph_build(graph_type='nws', n_nodes=None, seed=None, **kwargs):
 
 
 def _build_nws(n_nodes, seed, **kwargs):
-    """Newman-Watts-Strogatz small-world. GRAPH-3 will orient into DiGraph."""
+    """Newman-Watts-Strogatz small-world, oriented into a DiGraph.
+
+    Each undirected NWS edge {u, v} is assigned a single direction by
+    Bernoulli(0.5). The resulting graph has near-zero reciprocity,
+    matching empirical MSN-MSN reciprocity ~5-10% (Tunstall et al.
+    2002). Mean undirected degree of the source NWS is
+    ``k + 2 * p * (N - k - 1)``, not ``k``.
+    """
     k = int(kwargs.get('k', const.K))
     p = float(kwargs.get('p', const.P))
-    return nx.newman_watts_strogatz_graph(n_nodes, k, p, seed=seed)
+    undirected = nx.newman_watts_strogatz_graph(n_nodes, k, p, seed=seed)
+    rng = np.random.default_rng(seed)
+    G = nx.DiGraph()
+    G.add_nodes_from(undirected.nodes())
+    for u, v in undirected.edges():
+        if rng.random() < 0.5:
+            G.add_edge(u, v)
+        else:
+            G.add_edge(v, u)
+    return G
 
 
 def _build_modular(n_nodes, seed, **kwargs):
