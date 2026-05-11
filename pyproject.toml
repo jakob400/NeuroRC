@@ -1,0 +1,25 @@
+[project]
+name = "neurorc"
+version = "2.3.1"
+description = "Spiking-neuron simulation on NetworkX graphs (STR + LIF)"
+requires-python = ">=3.11"
+dependencies = [
+    "networkx>=3.0",
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "h5py",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v"
+markers = [
+    "validation: numerical validation suite (NUM-8)",
+]
