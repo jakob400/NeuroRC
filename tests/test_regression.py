@@ -14,14 +14,15 @@ def _voltage_history(state):
     return np.array(state.history['V']).T
 
 
-def test_lif_n2_baseline_matches():
-    G, state = simulate('LIF', N=2, K=1, P=1e-5, tMax=1000, seed=0)
+def test_lif_n2_baseline_matches_adaptive():
+    """Legacy adaptive-Euler baseline (the pre-NUM-3 stepper)."""
+    G, state = simulate('LIF', N=2, K=1, P=1e-5, tMax=1000, seed=0,
+                        fixed_dt_mode=False)
     V = _voltage_history(state)
     expected = np.load(BASELINES / 'lif_n2_k1_t1000_seed0.npy')
-
     assert V.shape == expected.shape, (V.shape, expected.shape)
     assert np.allclose(V, expected, rtol=0, atol=1e-9), (
-        'LIF baseline drift: max abs diff = %g' % np.abs(V - expected).max()
+        'LIF adaptive baseline drift: max abs diff = %g' % np.abs(V - expected).max()
     )
 
 

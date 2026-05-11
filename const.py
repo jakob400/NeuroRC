@@ -51,6 +51,11 @@ epsilon           = 1e-3     # Constraint on dynamics
 
 tMax              = 10000    # (steps)
 
+# Integrator selection (NUM-3): True uses fixed-dt Heun on V + exp-Euler on
+# conductances at dt_fixed. False uses the legacy adaptive Euler stepper.
+fixed_dt_mode     = True
+dt_fixed          = 25e-6    # (s) - 25 us; bracketed by spike-rise time and AMPA tau
+
 
 # Graph Building
 

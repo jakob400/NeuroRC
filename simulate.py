@@ -11,11 +11,12 @@ import numpy as np
 import const
 import graph_build
 import weight_generator
-import update_functions
+import integrators
 import state as state_mod
 
 
-def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0):
+def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0,
+             fixed_dt_mode=None, dt_fixed=None):
     if model not in ('STR', 'LIF'):
         raise ValueError("model must be 'STR' or 'LIF', got %r" % (model,))
 
@@ -23,7 +24,10 @@ def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0):
     np.random.seed(seed)
 
     saved = {}
-    overrides = {'N': N, 'K': K, 'P': P, 'tMax': tMax}
+    overrides = {
+        'N': N, 'K': K, 'P': P, 'tMax': tMax,
+        'fixed_dt_mode': fixed_dt_mode, 'dt_fixed': dt_fixed,
+    }
     for key, value in overrides.items():
         if value is not None:
             saved[key] = getattr(const, key)
@@ -35,7 +39,7 @@ def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0):
         G = weight_generator.weight_generator(G)
         state = state_mod.build_state(G, model)
 
-        step = update_functions.update_state_STR if model == 'STR' else update_functions.update_state_LIF
+        step = integrators.step_for(model)
         t_max = const.tMax
         for t in range(t_max):
             step(G, state, t)
