@@ -26,6 +26,21 @@ def test_lif_n2_baseline_matches_adaptive():
     )
 
 
+def test_lif_n10_baseline_matches_adaptive():
+    """Second baseline at N=10, K=4, P=0.2: 27 edges, so sigma(), recurrent
+    SpMV, and the ring-buffer delay lookup are all exercised (the N=2 baseline
+    has zero edges and trivially skips those paths)."""
+    G, state = simulate('LIF', N=10, K=4, P=0.2, tMax=1000, seed=0,
+                        fixed_dt_mode=False)
+    assert G.number_of_edges() > 0, 'baseline must have edges to exercise recurrent path'
+    V = _voltage_history(state)
+    expected = np.load(BASELINES / 'lif_n10_k4_p02_t1000_seed0.npy')
+    assert V.shape == expected.shape, (V.shape, expected.shape)
+    assert np.allclose(V, expected, rtol=0, atol=1e-9), (
+        'LIF n=10 baseline drift: max abs diff = %g' % np.abs(V - expected).max()
+    )
+
+
 def test_lif_deterministic_across_runs():
     G1, s1 = simulate('LIF', N=2, K=1, P=1e-5, tMax=100, seed=42)
     G2, s2 = simulate('LIF', N=2, K=1, P=1e-5, tMax=100, seed=42)
