@@ -1,62 +1,36 @@
 import matplotlib.pyplot as plt
-import numpy as np
+
 import const
-from pprint import pprint
+
 
 def voltage_plot(G):
-
-    nnumber1 = 0
-    nnumber2 = 1#50 # Neurons to graph
-
+    node = 0
+    attrs = G.nodes[node]
     dt_list = G.graph['dt_list']
 
-    x = []
-    x.append(0) # first element
-    for n in range(len(dt_list)):
-        x.append(x[-1] + dt_list[n])
+    x = [0.0]
+    for dt in dt_list:
+        x.append(x[-1] + dt)
 
-    y1 = G.nodes[nnumber1]['voltage']
-    #y2 = G.nodes[nnumber2]['voltage']
-    y_A = G.nodes[nnumber1]['conductance_A']
-    y_E = G.nodes[nnumber1]['conductance_E']
-    y_I = G.nodes[nnumber1]['conductance_I']
+    y_V = attrs['voltage']
+    has_conductances = 'conductance_A' in attrs
 
-    xmin = min(x)
-    xmax = max(x)
-    xwidth = xmax - xmin
+    plt.plot(x, y_V, label='voltage')
+    if has_conductances:
+        plt.plot(x, attrs['conductance_A'], label='g_A')
+        plt.plot(x, attrs['conductance_E'], label='g_E')
+        plt.plot(x, attrs['conductance_I'], label='g_I')
 
-    ymin = min([min(y1),min(y_A),min(y_E),min(y_I)])
-    ymax = max([max(y1),max(y_A),max(y_E),max(y_I)])
-    ywidth = ymax - ymin
-
-    #plt.plot(x,y1)
-    plt.plot(x,y_A)
-    plt.plot(x,y_E)
-    plt.plot(x,y_I)
-
-    #plt.text(xmin,ymin,'Time Increment (dt) = %.2e' % const.dt,fontsize=14)
-    plt.title('epsilon = %.2e' % (const.epsilon),fontsize=14)
-
-    plt.xlabel('Time (s)',fontsize=14)
-    plt.ylabel('Voltage (V)',fontsize=14)
-
-    plt.legend(['voltage','A','E','I'])
-    #plt.legend(['Neuron %d'%(nnumber1),'Neuron %d'%(nnumber2)])
+    plt.title('epsilon = %.2e' % const.epsilon, fontsize=14)
+    plt.xlabel('Time (s)', fontsize=14)
+    plt.ylabel('Voltage (V) / Conductance (S)', fontsize=14)
+    plt.legend()
     plt.tight_layout()
-
-    plt.savefig('figures/%dN%dK%.2eP.png'%(const.N,const.K,const.P))
+    plt.savefig('figures/%dN%dK%.2eP.png' % (const.N, const.K, const.P))
     plt.show()
     plt.clf()
 
-
-    t = range(len(dt_list))
-    y = dt_list[:-1]
-    x = x[:-1]
-
-    plt.plot(t,x,linestyle = '-.',marker = ',')
-    plt.xlabel('Time Index',fontsize=14)
-    plt.ylabel('Time',fontsize=14)
-
+    plt.plot(range(len(dt_list)), x[:-1], linestyle='-.', marker=',')
+    plt.xlabel('Time Index', fontsize=14)
+    plt.ylabel('Time (s)', fontsize=14)
     plt.show()
-
-    return
