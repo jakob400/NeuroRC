@@ -2,7 +2,9 @@ __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
-figures/
+# Root-level figures/ holds run.py / interactive output -- ignored.
+# Per-paper figures under publications/<paper>/figures/ ARE tracked.
+/figures/
 Animation Files/
 logs/
 .claude/

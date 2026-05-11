@@ -1,8 +1,8 @@
 """P0 methods-paper figure generator.
 
-Regenerates every figure in figures/p0/ and every CSV in data/p0/ from a
-clean checkout. Seed-pinned for reproducibility. Wall clock ~3-4 min on
-the dev laptop.
+Regenerates every figure in publications/p0_methods/figures/ and every
+CSV in publications/p0_methods/data/ from a clean checkout. Seed-pinned
+for reproducibility. Wall clock ~3-4 min on the dev laptop.
 
 Figures (saved as both 300 dpi PNG and vector SVG):
   - alpha_beta_heatmap.{png,svg}: 6x4 grid feasibility, pre vs post fix-B.
@@ -20,12 +20,18 @@ Pre-fix-B condition: conductance_KIR_max=0 (slow K disabled) and
 drive_mode='poisson'. This isolates the fix-B contribution.
 
 Usage:
-    uv run python -m scripts.p0_make_figures
+    uv run python publications/p0_methods/scripts/make_figures.py
 """
 
 import csv
 import os
+import sys
 import time
+from pathlib import Path
+
+# Add src/ to sys.path so this script can `import const`, `from simulate ...`.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(_REPO_ROOT / "src"))
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,8 +40,11 @@ import const
 from simulate import simulate
 
 
-FIG_DIR = 'figures/p0'
-DATA_DIR = 'data/p0'
+# Output paths are anchored to the paper directory, not cwd, so the script
+# works regardless of where it's invoked from.
+_PAPER_DIR = Path(__file__).resolve().parents[1]
+FIG_DIR = str(_PAPER_DIR / 'figures')
+DATA_DIR = str(_PAPER_DIR / 'data')
 
 PRE_FIX_B = dict(
     drive_mode='poisson',
