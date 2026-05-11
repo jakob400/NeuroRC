@@ -89,6 +89,10 @@ def build_state(G, model: str) -> State:
         state.history['g_A'] = [g_A.copy()]
         state.history['g_E'] = [g_E.copy()]
         state.history['g_I'] = [g_I.copy()]
+    # Per-neuron RHS magnitudes M[t,j] = max(|f_V|, |f_A|, |f_E|, |f_I|) — the
+    # quantity that drives adaptive dt and, by proposal #2, an EWS observable.
+    # Initial step has no RHS evaluation yet, so the first row is zero.
+    state.history['M'] = [np.zeros(N, dtype=np.float64)]
     return state
 
 

@@ -35,6 +35,7 @@ def test_hdf5_lif_round_trip(tmp_path):
         V_disk = f['V'][()]
         dt_disk = f['dt_list'][()]
         last_spike_disk = f['last_spike_time'][()]
+        M_disk = f['M'][()]
         # LIF dump skips conductance datasets.
         for key in ('g_A', 'g_E', 'g_I'):
             assert key not in f, key
@@ -44,6 +45,8 @@ def test_hdf5_lif_round_trip(tmp_path):
     np.testing.assert_array_equal(V_disk, V_mem)
     np.testing.assert_array_equal(dt_disk, np.asarray(state.dt_list))
     np.testing.assert_array_equal(last_spike_disk, state.last_spike_time)
+    assert M_disk.shape == (201, 4)
+    np.testing.assert_array_equal(M_disk, np.asarray(state.history['M']))
 
 
 def test_hdf5_str_round_trip(tmp_path):

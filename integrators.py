@@ -55,6 +55,7 @@ def step_heun_fixed_LIF(G, state, t):
     state.V = V_next
     state.V_buffer.push(V_next)
     state.history['V'].append(V_next.copy())
+    state.history['M'].append(np.abs(fV1))
     return state, state.current_time
 
 
@@ -114,6 +115,11 @@ def step_heun_fixed_STR(G, state, t):
     state.history['g_A'].append(g_A_next.copy())
     state.history['g_E'].append(g_E_next.copy())
     state.history['g_I'].append(g_I_next.copy())
+    fE = -a_E * g_E + drive_E
+    fA = -a_A * g_A + drive_A
+    fI = -a_I * g_I + drive_I
+    state.history['M'].append(np.maximum.reduce([np.abs(fV1), np.abs(fA),
+                                                 np.abs(fE), np.abs(fI)]))
     return state, state.current_time
 
 
