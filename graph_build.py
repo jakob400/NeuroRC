@@ -1,36 +1,24 @@
-import networkx as nx
-from weight_generator import weight_generator
+"""NWS graph construction. Per-neuron state lives on the State object
+(see state.py); this module is now only responsible for topology and
+weighted edges.
+"""
+
 import random
+
+import networkx as nx
+
 import const
 
+
 def graph_build():
-	"""Builds a Newmann-Watts-Strogatz graph"""
-	seed_no = random.randint(1, 10000)
-	G = nx.newman_watts_strogatz_graph(const.N,const.K,const.P,seed=seed_no)
-	G.name = 'Jakob\'s Model Network'
-	G.graph['dt_list'] = []
-	return G
+    """Builds a Newman-Watts-Strogatz graph."""
+    seed_no = random.randint(1, 10000)
+    G = nx.newman_watts_strogatz_graph(const.N, const.K, const.P, seed=seed_no)
+    G.name = "Jakob's Model Network"
+    G.graph['dt_list'] = []
+    return G
 
-def set_graph_attributes(G,model):
-	"""Sets initial graph parameters according to model. LIF only requires voltage update while STR requires conducdtance updates."""
-	#timelist = [0] * const.timesteps # makes 0-list of size 'timesteps'
-	v0 = const.voltage_init # Importing initial voltage parameter.
-	gA0 = const.conductance_A_init
-	gE0 = const.conductance_E_init
-	gI0 = const.conductance_I_init
-	NEVER_SPIKED = -1e9
-	if (model == 'STR'):
-		for j in range(G.number_of_nodes()): # Iterating over all nodes, to set initial parameters.
-			G.nodes[j].update({'voltage' : [v0]})
-			G.nodes[j].update({'conductance_A' : [gA0]})
-			G.nodes[j].update({'conductance_E' : [gE0]})
-			G.nodes[j].update({'conductance_I' : [gI0]})
-			G.nodes[j]['last_spike_time'] = NEVER_SPIKED
-	if (model == 'LIF'):
-		for j in range(G.number_of_nodes()): # Iterating over all nodes, to set initial parameters.
-			G.nodes[j].update({'voltage' : [v0]})
-			G.nodes[j]['last_spike_time'] = NEVER_SPIKED
-	return G
 
-# Future work:
-#
+def set_graph_attributes(G, model):
+    """No-op kept for API compatibility; per-neuron state lives on State."""
+    return G
