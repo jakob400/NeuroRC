@@ -18,16 +18,18 @@ def set_graph_attributes(G,model):
 	gA0 = const.conductance_A_init
 	gE0 = const.conductance_E_init
 	gI0 = const.conductance_I_init
+	NEVER_SPIKED = -1e9
 	if (model == 'STR'):
 		for j in range(G.number_of_nodes()): # Iterating over all nodes, to set initial parameters.
 			G.nodes[j].update({'voltage' : [v0]})
 			G.nodes[j].update({'conductance_A' : [gA0]})
 			G.nodes[j].update({'conductance_E' : [gE0]})
 			G.nodes[j].update({'conductance_I' : [gI0]})
+			G.nodes[j]['last_spike_time'] = NEVER_SPIKED
 	if (model == 'LIF'):
 		for j in range(G.number_of_nodes()): # Iterating over all nodes, to set initial parameters.
-			timelistv = [v0]
-			G.nodes[j].update({'voltage' : timelistv})
+			G.nodes[j].update({'voltage' : [v0]})
+			G.nodes[j]['last_spike_time'] = NEVER_SPIKED
 	return G
 
 # Future work:

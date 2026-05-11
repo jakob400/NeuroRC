@@ -3,128 +3,117 @@ import random
 import math_functions as fn
 import const
 
+
 def update_state_LIF(G, t):
     """ Master Update Calculation for LIF model """
     t_delayed = fn.delay(G, t)
     dt_list = G.graph['dt_list']
 
-    # Initializations:
     N = G.number_of_nodes()
-    M = [None] * N # Will have j of these.
+    M = [None] * N
     func_v = [None] * N
 
-    for j in range(N): # for loop over all nodes in G
-    # Now Updates:
+    for j in range(N):
         voltage_now = G.nodes[j]['voltage'][t]
 
-    # Func Calculations:
         summation = 0
-
         for k in G.neighbors(j):
-            if(k != j): # Redundant unless MultiGraph
-                neighbor_voltages = G.nodes[k]['voltage'] # copies list of all voltages for specific neighbor
-                summation = summation + G[j][k]['weight'] * fn.sigma(neighbor_voltages[t_delayed])#fn.delta(neighbor_voltages,t)
+            if k != j:
+                neighbor_voltages = G.nodes[k]['voltage']
+                summation += G[j][k]['weight'] * fn.sigma(neighbor_voltages[t_delayed])
         func_v[j] = const._a_m * (-1 * voltage_now + const.I_ext + const.g_syn * summation)
 
-    # Dynamic Protection:
-        M[j] = abs(func_v[j]) # Max value for neuron j
+        M[j] = abs(func_v[j])
 
-    # Final Dynamic Protection:
-    best_dt = const.epsilon / max(M) # Calculates what the dt should be
-    dt_list.append(best_dt) # Appends new dt to list of dt's
+    best_dt = const.epsilon / max(M)
+    dt_list.append(best_dt)
+    dt = dt_list[-1]
+    current_time = sum(dt_list)
 
-    # Main Calculations
     for j in range(N):
-        G.nodes[j]['voltage'].append(voltage_now + dt_list[-1] * func_v[j])        # Use [-1] or [t]. Equivalent, as both are most recent element
+        v_prev = G.nodes[j]['voltage'][t]
+        in_refr = (current_time - G.nodes[j]['last_spike_time']) < const.t_refr
+        if in_refr:
+            v_new = const.V_reset
+        else:
+            v_new = v_prev + dt * func_v[j]
+            if v_new >= const.V_thresh:
+                v_new = const.V_reset
+                G.nodes[j]['last_spike_time'] = current_time
+        G.nodes[j]['voltage'].append(v_new)
 
-
-    if(G.nodes[j]['voltage'][t] > 0.05): ##### TESTING FORCED PERIODICITY
-        G.nodes[j]['voltage'][t] = const.voltage_init
-
-    time_taken = sum(dt_list) # sums up all dt's
+    time_taken = current_time
     return G, time_taken
 
 
-
-
-
-
-
-
-
-def update_state_STR(G,t):
+def update_state_STR(G, t):
     """ Master Update Calculation for STR model """
     t_delayed = fn.delay(G, t)
     dt_list = G.graph['dt_list']
 
-    # Initializations:
     N = G.number_of_nodes()
-    M = [None] * N # Will have j of these.
+    M = [None] * N
     func_v = [None] * N
     func_A = [None] * N
     func_E = [None] * N
     func_I = [None] * N
 
-
-    for j in range(N): # for loop over all nodes in G
-    # Now Updates:
+    for j in range(N):
         voltage_now = G.nodes[j]['voltage'][t]
         conductance_E_now = G.nodes[j]['conductance_E'][t]
         conductance_I_now = G.nodes[j]['conductance_I'][t]
         conductance_A_now = G.nodes[j]['conductance_A'][t]
 
-        #if(voltage_now > 0.04): ##### TESTING FORCED PERIODICITY
-        #    G.nodes[j]['voltage'][t] = const.voltage_init
-        #    voltage_now = G.nodes[j]['voltage'][t]
-
-    # Preliminary Voltage calculations:
         excitatory = (const.voltage_E - voltage_now) * conductance_E_now
         inhibitory = (const.voltage_I - voltage_now) * conductance_I_now
-        leakage = (const.voltage_L - voltage_now) * const.conductance_L # this conductance doesn't evolve or depend on neuron
+        leakage = (const.voltage_L - voltage_now) * const.conductance_L
         potassium = (const.voltage_K - voltage_now) * (const.conductance_K_max * fn.sigma_0(voltage_now) + conductance_A_now)
 
-    # Func Calculations:
-        func_v[j] = (1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium) # potassium includes AHP, due to equation
+        func_v[j] = (1 / const.capacitance) * (excitatory + leakage + inhibitory + potassium)
         if const.drive_mode == 'constant':
             func_E[j] = -1 * const._a_E * conductance_E_now + const.I
         else:
             func_E[j] = -1 * const._a_E * conductance_E_now
         func_A[j] = -1 * const._a_A * conductance_A_now + const._a_A * const.w_A * const.conductance_A_max * fn.sigma(voltage_now)
+
         summation = 0
         for k in G.neighbors(j):
-            if(k != j): # Redundant unless MultiGraph
+            if k != j:
                 neighbor_voltage = G.nodes[k]['voltage'][t_delayed]
-                summation = summation + G[j][k]['weight'] * fn.sigma (neighbor_voltage)
-        func_I[j] = (-1 * const._a_I * conductance_I_now + const._a_I * const.conductance_I_max * summation)
+                summation += G[j][k]['weight'] * fn.sigma(neighbor_voltage)
+        func_I[j] = -1 * const._a_I * conductance_I_now + const._a_I * const.conductance_I_max * summation
 
-    # Randomness Generator
-        func_v[j] = func_v[j] #+ fn.get_Rand()
-        func_E[j] = func_E[j] #+ fn.get_Rand()
-        func_A[j] = func_A[j] #+ fn.get_Rand()
-        func_I[j] = func_I[j] #+ fn.get_Rand()
+        M[j] = max(abs(func_v[j]), abs(func_A[j]), abs(func_E[j]), abs(func_I[j]))
 
-    # Dynamic Protection:
-        M[j] = max(abs(func_v[j]), abs(func_A[j]), abs(func_E[j]), abs(func_I[j])) # Calculating max func value for neuron j
-    # Final Dynamic Protection:
-    best_dt = const.epsilon / max(M) # Calculates what the dt should be
-    dt_list.append(best_dt) # Appends new dt to list of dt's
-
-
-    # Main Calculations - reads per-neuron prior state from G.nodes[j][...][t]
+    best_dt = const.epsilon / max(M)
+    dt_list.append(best_dt)
     dt = dt_list[-1]
+    current_time = sum(dt_list)
     poisson_p = const.poisson_rate * dt if const.drive_mode == 'poisson' else 0.0
+
     for j in range(N):
         v_prev  = G.nodes[j]['voltage'][t]
         gE_prev = G.nodes[j]['conductance_E'][t]
         gI_prev = G.nodes[j]['conductance_I'][t]
         gA_prev = G.nodes[j]['conductance_A'][t]
+
+        in_refr = (current_time - G.nodes[j]['last_spike_time']) < const.t_refr
+        if in_refr:
+            v_new = const.V_reset
+        else:
+            v_new = v_prev + dt * func_v[j]
+            if v_new >= const.V_thresh:
+                v_new = const.V_reset
+                G.nodes[j]['last_spike_time'] = current_time
+
         gE_new = gE_prev + dt * func_E[j]
         if poisson_p > 0.0 and random.random() < poisson_p:
             gE_new += const.poisson_delta_g_E
-        G.nodes[j]['voltage'].append(v_prev + dt * func_v[j])
+
+        G.nodes[j]['voltage'].append(v_new)
         G.nodes[j]['conductance_E'].append(gE_new)
         G.nodes[j]['conductance_I'].append(gI_prev + dt * func_I[j])
         G.nodes[j]['conductance_A'].append(gA_prev + dt * func_A[j])
 
-    time_taken = sum(dt_list) # sums up all dt's
+    time_taken = current_time
     return G, time_taken

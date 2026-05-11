@@ -25,7 +25,13 @@ conductance_I_max = 1.5e-9   #Siemens - unitary recurrent IPSC scale (Koos/Teppe
 capacitance       = 0.5e-9   #F - capacitance of cell membrane
 _k                = 250      #(V)^-1 - slope of sigma_0 (Ponzi-Wickens 2010); transition width ~17 mV
 voltage_0         = -45e-3   #(V) -
-voltage_thresh    = -50e-3   #(V) - firing threshold
+voltage_thresh    = -50e-3   #(V) - half-activation voltage for sigma_0 (not the spike threshold)
+
+# Spike-reset policy (BIO-7): integrate-and-fire with a hard threshold.
+# When V crosses V_thresh, V is set to V_reset and held there for t_refr.
+V_thresh          = -40e-3   #(V) - spike threshold
+V_reset           = -70e-3   #(V) - post-spike voltage
+t_refr            = 2e-3     #(s) - absolute refractory period
 _beta             = 250      #(V)^-1 - slope of sigma (Ponzi-Wickens 2010); matched to _k for STR threshold gating
 w_A               = 0.5      # scale factor for AHP - lifted from 0.01 so adaptation reaches ~1% of leak current at saturation (Ponzi-Wickens 2010)
 I                 = 1e-3     # constant cortical drive (used only when drive_mode == 'constant')
