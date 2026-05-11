@@ -88,20 +88,24 @@ def update_state_STR(G, state, t):
     state.current_time += dt
     current_time = state.current_time
 
-    if const.drive_mode == 'poisson':
-        kicks = np.random.poisson(const.poisson_rate * dt, size=state.N)
-    else:
-        kicks = None
-
     in_refr = (current_time - state.last_spike_time) < const.t_refr
     V_next = np.where(in_refr, const.V_reset, V_now + dt * func_v)
     spike_mask = (~in_refr) & (V_next >= const.V_thresh)
     V_next = np.where(spike_mask, const.V_reset, V_next)
     state.last_spike_time = np.where(spike_mask, current_time, state.last_spike_time)
 
-    g_E_next = g_E + dt * func_E
-    if kicks is not None:
-        g_E_next = g_E_next + kicks * const.poisson_delta_g_E
+    if const.drive_mode == 'ou':
+        decay_ou = np.exp(-dt / const.ou_tau)
+        eta = np.random.standard_normal(size=state.N)
+        g_E_next = (const.ou_mean
+                    + (g_E - const.ou_mean) * decay_ou
+                    + const.ou_sigma * np.sqrt(1.0 - decay_ou * decay_ou) * eta)
+        g_E_next = np.maximum(g_E_next, 0.0)
+    else:
+        g_E_next = g_E + dt * func_E
+        if const.drive_mode == 'poisson':
+            kicks = np.random.poisson(const.poisson_rate * dt, size=state.N)
+            g_E_next = g_E_next + kicks * const.poisson_delta_g_E
     g_I_next = g_I + dt * func_I
     g_A_next = g_A + dt * func_A
     g_KIR_next = g_KIR + dt * func_KIR

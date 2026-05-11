@@ -57,15 +57,27 @@ I                 = 1e-3     # constant cortical drive (used only when drive_mod
 
 # Cortical drive: 'constant' keeps the legacy +I term in func_E; 'poisson'
 # drops it and instead delivers Poisson-distributed excitatory kicks of size
-# poisson_delta_g_E at rate poisson_rate (per neuron). Poisson drive is
-# required for decorrelation / reservoir / assembly analyses.
-drive_mode        = 'poisson'
+# poisson_delta_g_E at rate poisson_rate (per neuron); 'ou' bypasses the
+# AMPA decay entirely and lets g_E follow an Ornstein-Uhlenbeck process with
+# stationary mean ou_mean and std ou_sigma. OU mode is the post-fix-B
+# default: it gives mean drive low enough that g_KIR's bistability is
+# visible, with variance high enough that intermittent up-state excursions
+# still produce 0.5-2 Hz/neuron firing (Wilson & Kawaguchi 1996; Mahon 2006).
+drive_mode        = 'ou'
+# Poisson drive parameters (legacy, retained for backwards comparability).
 # Aggregate cortical Poisson drive per MSN: rate * delta_g_E / _a_E sets g_E
-# steady state. Calibrated to deliver V_ss near V_thresh so the network fires
-# at ~0.5-2 Hz/neuron in line with in vivo MSN rates (Mahon 2006, Sippy 2015).
-# Fine biophysical calibration (per-synapse delta_g_E, kAMPA tau) is deferred.
+# steady state at 20 nS, which under directed adjacency saturated the network
+# above V_KIR_half and prevented up-down bistability.
 poisson_rate      = 2.0e4    # Hz (aggregate)
 poisson_delta_g_E = 1.0e-9   # S (1 nS per kick, aggregate)
+# OU drive parameters. ou_tau=50 ms is the MSN up-state duration scale
+# (Mahon 2006 Fig. 3); ou_mean=3 nS sits between the V_down=-75 mV and
+# V_up=-55 mV balance points computed against g_L=28 nS, g_KIR_ss(V_down)~14
+# nS; ou_sigma=4 nS gives enough variance to cross V_KIR_half in both
+# directions every ~few hundred ms. Tunable; see scripts/diag_alpha_beta_grid.
+ou_tau            = 50e-3    # (s)
+ou_mean           = 3.0e-9   # (S)
+ou_sigma          = 4.0e-9   # (S)
 epsilon           = 1e-3     # Constraint on dynamics
 
 tMax              = 10000    # (steps)

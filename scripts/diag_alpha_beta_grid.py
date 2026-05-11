@@ -27,7 +27,10 @@ from simulate import simulate
 ALPHAS = [0.0, 0.25, 0.5, 1.0, 2.0, 4.0]
 BETAS = [0.0, 0.5, 1.0, 2.0]
 N_NODES = 100
-TMAX = 4000
+# 40000 * 25 us = 1.0 s. The OU drive's 50 ms autocorrelation and the
+# slow-K (KIR) 200 ms time constant both need many tau to reach steady
+# state; the prior 0.1 s window caught only the initial transient.
+TMAX = 40000
 SEED = 0
 V_THRESH_OVERRIDE = -0.041  # post-GRAPH-3 calibration; override at runtime
 

@@ -19,6 +19,7 @@ def _config_hash(model, seed) -> str:
         model, const.N, const.K, const.P, const.tMax, seed,
         const.fixed_dt_mode, const.dt_fixed, const.drive_mode,
         const.poisson_rate, const.poisson_delta_g_E,
+        const.ou_tau, const.ou_mean, const.ou_sigma,
     ]
     return hashlib.sha1(repr(parts).encode()).hexdigest()[:12]
 
@@ -40,6 +41,9 @@ def dump_state(state, model: str, seed: int, log_dir: str = 'logs') -> str:
         f.attrs['drive_mode'] = const.drive_mode
         f.attrs['poisson_rate'] = const.poisson_rate
         f.attrs['poisson_delta_g_E'] = const.poisson_delta_g_E
+        f.attrs['ou_tau'] = const.ou_tau
+        f.attrs['ou_mean'] = const.ou_mean
+        f.attrs['ou_sigma'] = const.ou_sigma
         f.attrs['current_time'] = state.current_time
 
         f.create_dataset('dt_list', data=np.asarray(state.dt_list))

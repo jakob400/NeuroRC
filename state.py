@@ -73,7 +73,10 @@ def build_state(G, model: str) -> State:
     V = np.full(N, const.voltage_init, dtype=np.float64)
     if model == 'STR':
         g_A = np.full(N, const.conductance_A_init, dtype=np.float64)
-        g_E = np.full(N, const.conductance_E_init, dtype=np.float64)
+        # Under OU drive g_E is the cortical drive itself (no AMPA decay);
+        # start at the OU stationary mean to skip a relaxation transient.
+        g_E_init = const.ou_mean if const.drive_mode == 'ou' else const.conductance_E_init
+        g_E = np.full(N, g_E_init, dtype=np.float64)
         g_I = np.full(N, const.conductance_I_init, dtype=np.float64)
         g_KIR = np.full(N, const.conductance_KIR_init, dtype=np.float64)
     else:

@@ -104,14 +104,24 @@ def step_heun_fixed_STR(G, state, t):
     drive_I = a_I * const.conductance_I_max * summation
     drive_KIR = a_KIR * const.conductance_KIR_max * sigmaKIR_now
 
-    g_E_next = g_E * decay_E + (drive_E / a_E) * (1.0 - decay_E)
     g_A_next = g_A * decay_A + (drive_A / a_A) * (1.0 - decay_A)
     g_I_next = g_I * decay_I + (drive_I / a_I) * (1.0 - decay_I)
     g_KIR_next = g_KIR * decay_KIR + (drive_KIR / a_KIR) * (1.0 - decay_KIR)
 
-    if const.drive_mode == 'poisson':
-        kicks = np.random.poisson(const.poisson_rate * dt, size=state.N)
-        g_E_next = g_E_next + kicks * const.poisson_delta_g_E
+    if const.drive_mode == 'ou':
+        # OU exact discretization: bypass AMPA decay; g_E is the cortical
+        # drive directly. Clamp to >= 0 (conductance).
+        decay_ou = np.exp(-dt / const.ou_tau)
+        eta = np.random.standard_normal(size=state.N)
+        g_E_next = (const.ou_mean
+                    + (g_E - const.ou_mean) * decay_ou
+                    + const.ou_sigma * np.sqrt(1.0 - decay_ou * decay_ou) * eta)
+        g_E_next = np.maximum(g_E_next, 0.0)
+    else:
+        g_E_next = g_E * decay_E + (drive_E / a_E) * (1.0 - decay_E)
+        if const.drive_mode == 'poisson':
+            kicks = np.random.poisson(const.poisson_rate * dt, size=state.N)
+            g_E_next = g_E_next + kicks * const.poisson_delta_g_E
 
     state.V = V_next
     state.g_E = g_E_next
