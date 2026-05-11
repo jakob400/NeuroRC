@@ -85,6 +85,17 @@ P                 = 1e-5 # 2e-3
 weight_low        = 0.0
 weight_high       = 1.0
 
+# Lognormal weight calibration for the Koos 2004 striatal MSN-MSN IPSC
+# (GRAPH-1). Per-synapse mean = 500 pS, CV = 1.0. With these in Siemens,
+# the recurrent inhibitory product conductance_I_max * weight reads as
+# (1.5 nS) * (500 pS) which is too small by ~3 orders of magnitude; callers
+# selecting lognormal weights should either drop conductance_I_max to 1.0
+# or interpret weights as dimensionless multipliers (mean ~1) by setting
+# mean_S=1.0 explicitly via assign_weights kwargs.
+R_in              = 200e6    # Ohm, MSN input resistance (Plenz & Aertsen 1996)
+weight_mean_S     = 0.5e-9   # S, mean unitary g_syn (Koos 2004)
+weight_cv         = 1.0
+
 # Initial Values
 voltage_init            = -70e-3 #volts
 conductance_A_init      = 10e-9 #Siemens
