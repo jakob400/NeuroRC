@@ -31,9 +31,11 @@ GRAPH-9 (smoke tests). All ten Phase 0-2 follow-ups F1-F10 are
   resolved**, D3 worsened-but-publishable. See `DIAGNOSTICS.md`
   post-fix-B sections.
 - **Phase B3** (revalidation, commit `4a5a716`) — captured all
-  before/after diagnostic outputs in `data/p0/`.
+  before/after diagnostic outputs in `publications/p0_methods/data/`.
 - **Phase P0-S** (methods-paper artifacts, commit `a30b151`) —
-  `scripts/p0_make_figures.py`, `figures/p0/`, `data/p0/*.csv`.
+  `publications/p0_methods/scripts/make_figures.py`,
+  `publications/p0_methods/figures/`,
+  `publications/p0_methods/data/*.csv`.
 
 56 tests passing in ~6 s under `uv run pytest`. Environment is
 uv-managed via `pyproject.toml`. The methods paper P0 is the immediate

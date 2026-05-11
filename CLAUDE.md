@@ -1,8 +1,8 @@
 # CLAUDE.md
 
 Guidance for Claude Code when working with this repo. For *what* to do next see
-`NEXT_STEPS.md`; this doc covers *how* the code is laid out and what to know to
-edit it safely.
+`docs/NEXT_STEPS.md`; this doc covers *how* the code is laid out and what to
+know to edit it safely.
 
 ## Project Overview
 
@@ -25,7 +25,7 @@ uv sync --extra dev
 uv run pytest                              # 56 tests, ~6 s
 uv run python run.py                       # interactive CLI; prompts STR/LIF
 uv run python -m scripts.phase1_biophysics_report
-uv run python -m scripts.p0_make_figures   # ~3-4 min, fills figures/p0/
+uv run python publications/p0_methods/scripts/make_figures.py  # ~3-4 min
 ```
 
 Headless:
@@ -79,7 +79,8 @@ pattern.
 **Visualization:**
 - `dynamic_voltage_plot.voltage_plot(state, node=0)` — V + conductance traces.
 - `network_plot.py` — network state snapshots (for animation).
-- `scripts/p0_make_figures.py` — regenerates every P0 methods-paper figure.
+- `publications/p0_methods/scripts/make_figures.py` — regenerates every P0
+  methods-paper figure.
 
 **Logging:** `logging_hdf5.dump_state(state, model, seed, log_dir)` — one
 HDF5 per run, file name keyed by a SHA-1 over config + drive params. Dumps V,
@@ -111,7 +112,7 @@ all conductances (incl. g_KIR), dt_list, last_spike_time, and per-step
 - Phase 3 shared minimum (graph dispatch + lognormal weights + NWS-as-DiGraph
   + modular SBM + MS-rewire) done.
 - **Fix A** (V_thresh recalibration) and **fix B** (slow K + OU drive) done.
-  D1/D2/D4 resolved; D3 worsened-but-publishable. See `DIAGNOSTICS.md` for
+  D1/D2/D4 resolved; D3 worsened-but-publishable. See `docs/DIAGNOSTICS.md` for
   before/after numbers.
 - P0 (methods paper) is the next deliverable; all repo-side artifacts
   (figures, CSVs, scripts) are committed. Manuscript drafting is off-repo.

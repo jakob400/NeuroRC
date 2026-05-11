@@ -52,8 +52,8 @@ dynamic range that constrains its utility as an early-warning signal."
 - `scripts/phase1_biophysics_report.py` — BIO-1/2/3 + AHP τ pre/post
 - `DIAGNOSTICS.md` — synthesis with post-fix-B sections under each of
   D1, D2, D3, D4 and a clean aggregate before/after table
-- `data/p0/*.txt` — raw stdout dumps from each diagnostic, for direct
-  citation in the manuscript
+- `publications/p0_methods/data/*.txt` — raw stdout dumps from each
+  diagnostic, for direct citation in the manuscript
 
 **What's still needed:**
 
@@ -63,14 +63,14 @@ dynamic range that constrains its utility as an early-warning signal."
   | Section | Source material | Status |
   |---|---|---|
   | Intro: Söderlind/Scheffel framing | `RESEARCH_DIRECTIONS.md` §Proposal 2 citations | Outline only |
-  | Methods: model + dispatched graphs | `CLAUDE.md`, `state.py`, `graph_build.py`, `integrators.py` | All code present |
-  | Result 1: Bifurcation infeasibility regions | `figures/p0/alpha_beta_heatmap.{png,svg}`, `data/p0/alpha_beta_grid_{pre,post}.csv`, DIAGNOSTICS.md D2 | Figures and CSVs generated |
-  | Result 2: V_thresh sensitivity knife-edge | `figures/p0/v_thresh_sensitivity.{png,svg}`, `data/p0/v_thresh_sweep_{pre,post}.csv`, DIAGNOSTICS.md D4 | Figures and CSVs generated |
-  | Result 3: Bistability rescues α×β grid | `figures/p0/v_histogram.{png,svg}`, `data/p0/v_histogram_post.csv` | Figures and CSVs generated |
-  | Result 4: dt-folklore quantification | `figures/p0/dt_kde.{png,svg}`, `data/p0/dt_ranges.csv`, DIAGNOSTICS.md D3 | Figures and CSVs generated |
+  | Methods: model + dispatched graphs | `CLAUDE.md`, `src/{state,graph_build,integrators}.py` | All code present |
+  | Result 1: Bifurcation infeasibility regions | `publications/p0_methods/figures/alpha_beta_heatmap.{png,svg}`, `publications/p0_methods/data/alpha_beta_grid_{pre,post}.csv`, DIAGNOSTICS.md D2 | Figures and CSVs generated |
+  | Result 2: V_thresh sensitivity knife-edge | `publications/p0_methods/figures/v_thresh_sensitivity.{png,svg}`, `publications/p0_methods/data/v_thresh_sweep_{pre,post}.csv`, DIAGNOSTICS.md D4 | Figures and CSVs generated |
+  | Result 3: Bistability rescues α×β grid | `publications/p0_methods/figures/v_histogram.{png,svg}`, `publications/p0_methods/data/v_histogram_post.csv` | Figures and CSVs generated |
+  | Result 4: dt-folklore quantification | `publications/p0_methods/figures/dt_kde.{png,svg}`, `publications/p0_methods/data/dt_ranges.csv`, DIAGNOSTICS.md D3 | Figures and CSVs generated |
   | Calibration cookbook | `scripts/phase1_biophysics_report.py`, `scripts/diag_recalibrate_directed.py` | Scripts present |
-  | Discussion: generalization | `scripts/p0_brian2_portability.py` (optional) | Not yet implemented; ~3 days extra |
-  | Reproducibility | `scripts/p0_make_figures.py` (single-entry rebuild) | Done |
+  | Discussion: generalization | `publications/p0_methods/scripts/brian2_portability.py` (optional) | Not yet implemented; ~3 days extra |
+  | Reproducibility | `publications/p0_methods/scripts/make_figures.py` (single-entry rebuild) | Done |
 - Optional Brian2/NEURON portability spike (P0.4) for the "does this
   generalize" reviewer defense. Skip if calendar pressure.
 

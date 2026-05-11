@@ -29,9 +29,9 @@ Proposal #3 (connectome atlas) still needs Fix C (Snudda + GRAPH-8).
 
 - `PUBLICATIONS.md` writing checklist for P0 (the methods paper that
   emerged from the diagnostic work).
-- `figures/p0/` paper-grade figures generated from
-  `scripts/p0_make_figures.py`.
-- `data/p0/` CSV dumps of every numerical claim. (Diagnostic text dumps
+- `publications/p0_methods/figures/` paper-grade figures generated from
+  `publications/p0_methods/scripts/make_figures.py`.
+- `publications/p0_methods/data/` CSV dumps of every numerical claim. (Diagnostic text dumps
   already landed; conversion to CSV is mechanical.)
 - Optional: Brian2/NEURON portability spike for the "does this
   generalize" reviewer defense.
