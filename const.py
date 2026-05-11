@@ -7,7 +7,7 @@ def timestep_calc (total_time, dt):
 # Inverse Time Constants
 _a_E = 1e3     #(sec)^-1
 _a_I = 0.2e3   #(sec)^-1
-_a_A = 1e3     #(sec)^-1
+_a_A = 20      #(sec)^-1 - tau_AHP = 50 ms (Nisenbaum & Wilson 1995)
 
 # Channel Reversing Potentials
 voltage_E = 50e-3     #(V) - excitatory
