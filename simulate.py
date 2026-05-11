@@ -1,8 +1,8 @@
 """Headless simulation entry point.
 
-Wraps graph construction, attribute initialization, weight assignment and
-the per-timestep update loop into a single callable so that tests and
-batch runs do not have to duplicate run.py.
+Builds the graph, an initial State, runs the per-timestep update loop,
+and returns (G, state).  Tests and batch sweeps call this; run.py wraps
+it in an interactive prompt.
 """
 
 import random
@@ -12,15 +12,10 @@ import const
 import graph_build
 import weight_generator
 import update_functions
+import state as state_mod
 
 
 def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0):
-    """Run a simulation and return the final graph.
-
-    Any of N/K/P/tMax overrides the corresponding value in const.py for
-    the duration of the call. seed seeds both random and numpy so graph
-    topology, weights, and any stochastic dynamics are reproducible.
-    """
     if model not in ('STR', 'LIF'):
         raise ValueError("model must be 'STR' or 'LIF', got %r" % (model,))
 
@@ -38,14 +33,13 @@ def simulate(model, *, N=None, K=None, P=None, tMax=None, seed=0):
         G = graph_build.graph_build()
         G = graph_build.set_graph_attributes(G, model)
         G = weight_generator.weight_generator(G)
+        state = state_mod.build_state(G, model)
 
         step = update_functions.update_state_STR if model == 'STR' else update_functions.update_state_LIF
         t_max = const.tMax
-        t = 0
-        while t < t_max:
-            G, _ = step(G, t)
-            t += 1
-        return G
+        for t in range(t_max):
+            step(G, state, t)
+        return G, state
     finally:
         for key, value in saved.items():
             setattr(const, key, value)

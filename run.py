@@ -6,10 +6,7 @@ from dynamic_voltage_plot import voltage_plot
 
 
 def main():
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
+    os.system('cls' if os.name == 'nt' else 'clear')
     print(' =========================================== ')
     print('|-|   NeuroRC: Version 2.3.1              |-|')
     print('|-|   Author: J Weirathmueller            |-|')
@@ -23,14 +20,13 @@ def main():
             break
         print('Invalid input; Please try again.\n')
 
-    G = simulate(model, tMax=const.tMax)
+    G, state = simulate(model, tMax=const.tMax)
 
-    time_taken = sum(G.graph['dt_list'])
-    print('Time calculated over = ', time_taken)
-    print('Time steps taken     = ', len(G.nodes[0]['voltage']), '\n')
+    print('Time calculated over = ', state.current_time)
+    print('Time steps taken     = ', len(state.dt_list), '\n')
     print('Graph: %s, nodes=%d, edges=%d\n' % (G.name, G.number_of_nodes(), G.number_of_edges()))
 
-    voltage_plot(G)
+    voltage_plot(state)
 
 
 if __name__ == '__main__':

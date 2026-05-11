@@ -1,25 +1,19 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 import const
 
 
-def voltage_plot(G):
-    node = 0
-    attrs = G.nodes[node]
-    dt_list = G.graph['dt_list']
+def voltage_plot(state, node=0):
+    dt_list = state.dt_list
+    x = np.concatenate(([0.0], np.cumsum(dt_list)))
 
-    x = [0.0]
-    for dt in dt_list:
-        x.append(x[-1] + dt)
-
-    y_V = attrs['voltage']
-    has_conductances = 'conductance_A' in attrs
-
-    plt.plot(x, y_V, label='voltage')
-    if has_conductances:
-        plt.plot(x, attrs['conductance_A'], label='g_A')
-        plt.plot(x, attrs['conductance_E'], label='g_E')
-        plt.plot(x, attrs['conductance_I'], label='g_I')
+    V_hist = np.array(state.history['V'])  # (n_steps, N)
+    plt.plot(x, V_hist[:, node], label='V')
+    if state.model == 'STR':
+        plt.plot(x, np.array(state.history['g_A'])[:, node], label='g_A')
+        plt.plot(x, np.array(state.history['g_E'])[:, node], label='g_E')
+        plt.plot(x, np.array(state.history['g_I'])[:, node], label='g_I')
 
     plt.title('epsilon = %.2e' % const.epsilon, fontsize=14)
     plt.xlabel('Time (s)', fontsize=14)

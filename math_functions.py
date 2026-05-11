@@ -1,62 +1,37 @@
-import math
 import numpy as np
+
 import const
-import networkx as nx
-import random
 
-
-def get_Rand():
-    state = get_Sign() * round(np.random.normal(0,5e-5), int(random.uniform(10,15)))
-    return state
-
-def get_Sign():
-    value = round(random.uniform(0,1))
-    if (value==0):
-        state = -1
-    else:
-        state = 1
-    return state
-#time division is dt
 
 def sigma(voltage_now):
-    """ Regular sigma calculation """
-    result = math.pow(1 + math.exp(const._beta * (const.voltage_thresh - voltage_now)), -1) #figure out what _beta should be
-    return result
+    """Scalar sigma; kept for backwards compatibility."""
+    return 1.0 / (1.0 + np.exp(const._beta * (const.voltage_thresh - voltage_now)))
+
 
 def sigma_0(voltage_now):
-    """ Sigma_0 calculation """
-    result = math.pow(1 + math.exp(const._k * (const.voltage_0 - voltage_now)), -1)
-    return result
+    """Scalar sigma_0; kept for backwards compatibility."""
+    return 1.0 / (1.0 + np.exp(const._k * (const.voltage_0 - voltage_now)))
 
-def delta(G, neighbor_voltages, t):
-    """ Checks if there has been a pulse _tau_D seconds ago and responds accordingly """
-    t_delayed = delay(G, t)
-    summation = 0
-    for i in range(len(neighbor_voltages)):
-        summation += neighbor_voltages[t_delayed]
-    return summation
 
-def delay(G, t):
-    """ Calculates how many timesteps ago _tau_D is  """
-    dt_list = G.graph['dt_list']
-    dt_sum = 0
+def sigma_vec(V):
+    """Vectorized sigma over an ndarray of voltages."""
+    return 1.0 / (1.0 + np.exp(const._beta * (const.voltage_thresh - V)))
+
+
+def sigma_0_vec(V):
+    """Vectorized sigma_0."""
+    return 1.0 / (1.0 + np.exp(const._k * (const.voltage_0 - V)))
+
+
+def delay(state, t):
+    """How many timesteps ago _tau_D was, by accumulating dt_list backwards."""
+    dt_list = state.dt_list
+    dt_sum = 0.0
     i = 0
-    while( dt_sum < const._tau_D ):
-        if(len(dt_list) > i): # Does not proceed if list of dt's is not long enough.
-            dt_sum += dt_list[-i-1]
+    while dt_sum < const._tau_D:
+        if len(dt_list) > i:
+            dt_sum += dt_list[-i - 1]
             i += 1
         else:
             break
-    return t-i
-
-
-
-
-
-
-
-    # Future Work:
-    #
-    # Find correct values for I, w_A, conductance_A_max
-    #
-    # Add in conductance_I_max
+    return t - i
