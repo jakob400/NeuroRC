@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -20,6 +22,7 @@ def voltage_plot(state, node=0):
     plt.ylabel('Voltage (V) / Conductance (S)', fontsize=14)
     plt.legend()
     plt.tight_layout()
+    os.makedirs('figures', exist_ok=True)
     plt.savefig('figures/%dN%dK%.2eP.png' % (const.N, const.K, const.P))
     plt.show()
     plt.clf()
