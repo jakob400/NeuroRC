@@ -25,16 +25,23 @@ observable) should be abandoned in its original framing; the dt-range
 finding folds into the P0 methods paper as a clean before/after result.
 Proposal #3 (connectome atlas) still needs Fix C (Snudda + GRAPH-8).
 
-**What's left to do (deferred to a later session):**
+**Engineering done; manuscript drafting next.** All repo-side P0
+artifacts have landed:
 
-- `PUBLICATIONS.md` writing checklist for P0 (the methods paper that
-  emerged from the diagnostic work).
-- `publications/p0_methods/figures/` paper-grade figures generated from
-  `publications/p0_methods/scripts/make_figures.py`.
-- `publications/p0_methods/data/` CSV dumps of every numerical claim. (Diagnostic text dumps
-  already landed; conversion to CSV is mechanical.)
-- Optional: Brian2/NEURON portability spike for the "does this
-  generalize" reviewer defense.
+- `publications/p0_methods/figures/` — 4 figures, PNG + SVG.
+- `publications/p0_methods/data/` — 6 CSVs + 4 raw stdout dumps.
+- `publications/p0_methods/scripts/make_figures.py` — single-entry
+  regeneration (~3 min wall clock).
+- `publications/p0_methods/notes.md` — manuscript outline + section-by-
+  section source-material pointers + falsification criterion.
+- `docs/PUBLICATIONS.md` — full P0 writing checklist with output paths.
+
+**Remaining (off-repo):**
+
+- Draft the P0 manuscript in `publications/p0_methods/manuscript/`
+  using `docs/teX.md` as the LaTeX style reference.
+- Optional: Brian2/NEURON portability spike (~3 days) to defend
+  against the "does this generalize" reviewer objection.
 
 ## Completed: fix A + fix B
 
@@ -154,23 +161,41 @@ These looked scary at various points but turn out to be fine:
 
 ## File map for a picker-upper
 
+Read top-to-bottom for full context (~20 min):
+
 | File | What it tells you |
 |---|---|
-| `README.md` | Quick start, doc map. |
-| `CLAUDE.md` | Project overview and architecture. |
-| `RESEARCH_DIRECTIONS.md` | The three publishable proposals + citations. |
-| `IMPLEMENTATION.md` | The audit that motivated PLAN.md. |
-| `PLAN.md` | 5-phase operational plan with per-item status. |
-| `DIAGNOSTICS.md` | The four diagnostic runs from 2026-05-11 and what they imply. |
-| `PUBLICATIONS.md` | Per-paper deliverable breakdown (P0–P3): claim, venue, falsification, time to manuscript, fixes needed. |
-| `NEXT_STEPS.md` | *(this file)* The synthesis of where we are and what to do. |
+| `README.md` | Quick start, doc map, repo layout. |
+| `CLAUDE.md` | Project architecture (5-state STR + LIF, OU drive default, src/ layout, threshold-reset, sparse adjacency, integrator dispatch). |
+| `docs/NEXT_STEPS.md` | *(this file)* Where we are, what's done, what's next. |
+| `docs/PUBLICATIONS.md` | Per-paper deliverable breakdown (P0–P3) with manuscript outlines. |
+| `publications/README.md` | Per-paper writing workspace structure. |
+| `publications/<paper>/notes.md` | Each manuscript's status + outline + falsification criterion. |
+| `docs/DIAGNOSTICS.md` | Four diagnostic findings (D1-D4) with pre/post fix-B before/after tables. |
+| `docs/RESEARCH_DIRECTIONS.md` | Original three publishable proposals + citations (now with status banners per proposal). |
+| `docs/PLAN.md` | Operational plan with per-item status. |
+| `docs/IMPLEMENTATION.md` | The audit that motivated PLAN.md. |
+| `docs/teX.md` | LaTeX cheat-sheet used across all manuscripts. |
+
+Repository layout (post-2026-05-11 reorg):
+
+```
+src/                          Simulator core (importable as flat modules)
+publications/<paper>/         Per-manuscript workspace (manuscript, figures, data, scripts, notes.md)
+docs/                         Project-management markdown
+scripts/                      General diagnostics
+tests/                        56 tests; conftest.py adds src/ to path
+run.py                        CLI wrapper (sys.path bootstrap)
+```
 
 Companion executables:
-- `uv run pytest` — 49 tests, ~1.7 s
+- `uv run pytest` — 56 tests, ~6 s
 - `uv run python run.py` — interactive CLI (LIF/STR prompt)
 - `uv run python -m scripts.phase1_biophysics_report` — biophysics
-  sanity (BIO-1/2/3 targets)
+  sanity (BIO-1/2/3 + AHP τ + IPSC scale targets)
 - `uv run python -m scripts.diag_*` — the four diagnostics
+- `uv run python publications/p0_methods/scripts/make_figures.py` —
+  regenerates P0 figures + CSVs; ~3-4 min wall clock
 - `uv run python -m scripts.proposal2_pilot_smoke` — EWS pipeline
   smoke test
 - `uv run python -m scripts.proposal2_pilot` — reduced K-sweep pilot

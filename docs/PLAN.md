@@ -42,6 +42,14 @@ uv-managed via `pyproject.toml`. The methods paper P0 is the immediate
 next deliverable (manuscript drafting off-repo); see `PUBLICATIONS.md`
 and `NEXT_STEPS.md`.
 
+**Repo layout note:** The plan body below was written before the
+2026-05-11 reorganization. All simulator code referenced as
+`const.py`, `simulate.py`, `metrics/pipeline_*.py`, etc., now lives
+under `src/` and `src/metrics/`. Diagnostic outputs originally written
+to `figures/p0/` and `data/p0/` now live under
+`publications/p0_methods/{figures,data}/`. The plan body is otherwise
+unmodified.
+
 ---
 
 ## Overview

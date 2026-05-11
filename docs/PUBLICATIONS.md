@@ -107,9 +107,9 @@ a τᵢ-shape-only claim or abandon.
   - LIF-het (per-neuron g_L) and LIF-ALIF (adaptive threshold) variants.
   - Firing-rate matching (binary search on drive — or, given fix B has
     rates uniform across the grid without matching, may be unnecessary).
-  - `metrics/pipeline_a_reservoir.py` (ridge regression + LOO-CV + MC +
+  - `src/metrics/pipeline_a_reservoir.py` (ridge regression + LOO-CV + MC +
     NARMA-10 + IPC decomposition).
-  - `metrics/ipc.py` (Dambre 2012 reimplementation) — heaviest single
+  - `src/metrics/ipc.py` (Dambre 2012 reimplementation) — heaviest single
     piece of new code. 3–5 days alone.
 
 **Top threats:**
@@ -142,7 +142,7 @@ realism."
 
 **What was already in the repo (still useful for P0):**
 
-- `metrics/ews.py`, `metrics/oracles.py`, `metrics/stats.py`
+- `src/metrics/ews.py`, `src/metrics/oracles.py`, `src/metrics/stats.py`
 - `scripts/proposal2_pilot_smoke.py`
 - `scripts/proposal2_pilot.py`
 - `scripts/diag_soderlind_separation.py` — the decisive test
@@ -173,7 +173,7 @@ topology") and stop. Either branch publishes.
   schema-drift work.
 - GRAPH-6: Gamma kernel — blocked on Yim 2017 parameter verification.
 - GRAPH-8: four matching protocols (rate, E-drive, I-drive, variance).
-- `metrics/pipeline_c_spikes.py`: NMF assembly detection, Pareto ISI
+- `src/metrics/pipeline_c_spikes.py`: NMF assembly detection, Pareto ISI
   fitting, Plenz-style avalanche-modulated drive, Clauset power-law
   fit.
 
