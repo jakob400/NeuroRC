@@ -74,6 +74,10 @@ forward paths:
   2–3 weeks. Unlocks proposal #3. Has a six-month scoop clock from
   the Kotaleski lab.
 
+For the per-paper "what does this look like as an actual deliverable"
+breakdown — title, claim, target venue, falsification criterion, and
+which engineering fixes each one needs — see `PUBLICATIONS.md`.
+
 ## Per-proposal pilot success odds (rough, drawn from `DIAGNOSTICS.md`
 and `RESEARCH_DIRECTIONS.md`)
 
@@ -143,6 +147,7 @@ These looked scary at various points but turn out to be fine:
 | `IMPLEMENTATION.md` | The audit that motivated PLAN.md. |
 | `PLAN.md` | 5-phase operational plan with per-item status. |
 | `DIAGNOSTICS.md` | The four diagnostic runs from 2026-05-11 and what they imply. |
+| `PUBLICATIONS.md` | Per-paper deliverable breakdown (P0–P3): claim, venue, falsification, time to manuscript, fixes needed. |
 | `NEXT_STEPS.md` | *(this file)* The synthesis of where we are and what to do. |
 
 Companion executables:

@@ -30,6 +30,7 @@ G, state = simulate('STR', N=500, K=20, P=0.1, tMax=20000,
 | Document | When to read it |
 |---|---|
 | [`NEXT_STEPS.md`](NEXT_STEPS.md) | **Start here.** Where the project stands today, what's broken, what to do next, and which paper(s) are publishable. |
+| [`PUBLICATIONS.md`](PUBLICATIONS.md) | Expected paper portfolio: four candidate papers (P0–P3), their claims, falsification criteria, time-to-manuscript, and which engineering fixes each one needs. |
 | [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md) | Three publishable research directions with citations, kill-paper analyses, and pilot designs. |
 | [`PLAN.md`](PLAN.md) | Five-phase operational plan; 44 atomic changes with per-item status, file:line references, and verification commands. |
 | [`DIAGNOSTICS.md`](DIAGNOSTICS.md) | Four diagnostic runs (2026-05-11) that surfaced three project-level constraints. Read alongside `NEXT_STEPS.md`. |
