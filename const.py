@@ -26,7 +26,7 @@ _k                = 8e-1      #(V)^-1 - slope of the sigmoid (smaller is more gr
 voltage_0         = -45e-3   #(V) -
 voltage_thresh    = -50e-3   #(V) - firing threshold
 _beta             = 8e-1      #(v)^-1 - tells about slope of sigma (oid?). experiment with value. start out similar to k.
-w_A               = 1e-2     # scale factor for AHP
+w_A               = 0.5      # scale factor for AHP - lifted from 0.01 so adaptation reaches ~1% of leak current at saturation (Ponzi-Wickens 2010)
 I                 = 1e-3     # striatal afferents determined by cortical afferents (should make dynamic later)
 epsilon           = 1e-3     # Constraint on dynamics
 
